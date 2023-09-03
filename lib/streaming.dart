@@ -2,7 +2,47 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:realtime_taiwan/cctv.dart';
+
+class StreamImage extends StatefulWidget {
+  final String url;
+  const StreamImage({super.key, required this.url});
+
+  @override
+  State<StreamImage> createState() => _StreamImageState();
+}
+
+class _StreamImageState extends State<StreamImage> {
+  ImageStreaming? streaming;
+  Uint8List? cached;
+
+  @override
+  void initState() {
+    super.initState();
+
+    imageStream();
+  }
+
+  imageStream() async {
+    streaming = ImageStreaming(
+      url: widget.url,
+      onImage: (List<int> buffer) {
+        print("on image");
+        setState(() {
+          cached = Uint8List.fromList(buffer);
+        });
+      },
+    );
+    streaming!.send();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (cached != null) return Image.memory(cached!);
+    return Container();
+  }
+}
 
 class StreamingPage extends StatefulWidget {
   final String title;
@@ -15,52 +55,24 @@ class StreamingPage extends StatefulWidget {
 
 class _StreamingPageState extends State<StreamingPage> {
   String time = DateTime.now().millisecondsSinceEpoch.toString();
-  StreamImage? image;
-  List<int> imageBuffer = [];
-  Uint8List? imageCache;
 
   @override
   void initState() {
     super.initState();
-
-    var streamImage = StreamImage(url: widget.info['videostreamurl']!);
-    image = streamImage;
-    sendRequest();
-  }
-
-  sendRequest() async {
-    await image!.send();
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(time),
+        title: Text(widget.title),
       ),
       body: Center(
         child: Container(
           constraints: BoxConstraints.expand(),
-          child: (image?.respone != null)
-              ? StreamBuilder<List<int>>(
-                  stream: image!.respone,
-                  builder: (context, snapshot) {
-                    print("realtime!");
-                    if (snapshot.data!.length > 1000) {
-                      imageBuffer.addAll(snapshot.data!);
-                    } else {
-                      print("cached");
-                      imageCache = Uint8List.fromList(imageBuffer);
-                      imageBuffer = [];
-                    }
-                    if (imageCache == null) return Container();
-                    return Image.memory(
-                      imageCache!,
-                      fit: BoxFit.cover,
-                    );
-                  })
-              : Container(),
+          child: StreamImage(
+            url: widget.info['videostreamurl']!,
+          ),
         ),
       ),
     );
