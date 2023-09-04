@@ -1,26 +1,21 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:realtime_taiwan/cctv.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import 'dart:io' show Platform;
 
 void PlatformVideoWidget() {
   if (true) {}
 }
 
 class StreamingPage extends StatefulWidget {
-  final String title;
-  final ScrollController scrollController;
   final Map<String, String> info;
 
   const StreamingPage({
     super.key,
-    required this.title,
     required this.info,
-    required this.scrollController,
   });
 
   @override
@@ -36,10 +31,13 @@ class _StreamingPageState extends State<StreamingPage> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid || Platform.isIOS)
-      controller = WebViewController()
-        ..loadRequest(Uri.parse(widget.info['videostreamurl']!));
-    timer();
+    Future.delayed(Duration.zero, () {
+      var platform = Theme.of(context).platform;
+      if (platform == TargetPlatform.android || platform == TargetPlatform.iOS)
+        controller = WebViewController()
+          ..loadRequest(Uri.parse(widget.info['videostreamurl']!));
+      timer();
+    });
   }
 
   timer() async {
@@ -47,9 +45,6 @@ class _StreamingPageState extends State<StreamingPage> {
       await Future.delayed(Duration(seconds: 30));
       print("update");
 
-      // final url = widget.info['videoimageurl']!;
-      // final base64 = await fetchImgBase64(url + "?${time}");
-      // print("fetched");
       setState(() {
         // imageBase64 = base64;
         time = DateTime.now().millisecondsSinceEpoch.toString();
@@ -59,40 +54,64 @@ class _StreamingPageState extends State<StreamingPage> {
 
   @override
   Widget build(BuildContext context) {
-    // var base64Img = imageBase64 != null
-    //     ? Image.memory(
-    //         base64Decode(imageBase64!),
-    //         fit: BoxFit.cover,
-    //         gaplessPlayback: true,
-    //       )
-    //     : Container();
-
-    var videoWidget = Platform.isAndroid && Platform.isIOS
-        ? WebViewWidget(
-            controller: controller,
-          )
-        : Padding(
-            padding: const EdgeInsets.all(0),
-            child: Container(
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              child: Container(
-                // height: 200,
-                width: double.infinity,
-                child: AspectRatio(
-                  aspectRatio: 1.7,
-                  child: Image.network(
-                    "${widget.info['videoimageurl']!}?${time}",
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
+    var platform = Theme.of(context).platform;
+    var videoWidget =
+        platform == TargetPlatform.android || platform == TargetPlatform.iOS
+            ? WebViewWidget(
+                controller: controller,
+              )
+            : Padding(
+                padding: const EdgeInsets.all(0),
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: Container(
+                    // height: 200,
+                    width: double.infinity,
+                    child: AspectRatio(
+                      aspectRatio: 1.7,
+                      child: Image.network(
+                        "${widget.info['videoimageurl']!}?${time}",
+                        fit: BoxFit.cover,
+                        gaplessPlayback: true,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
+              );
 
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              videoWidget,
+              // Text(time),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class StreamingPageSideSheet extends StatelessWidget {
+  final Map<String, String> info;
+  const StreamingPageSideSheet({
+    super.key,
+    required this.info,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -114,33 +133,55 @@ class _StreamingPageState extends State<StreamingPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(widget.info['roadname']!),
+              Text(info['roadname']!),
               Text(
-                widget.info['locationmile']!,
+                info['locationmile']!,
                 style: Theme.of(context).textTheme.bodyMedium,
               )
             ],
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          child: SingleChildScrollView(
+      body: StreamingPage(
+        info: info,
+      ),
+    );
+  }
+}
+
+class StreamingPageBottomSheet extends StatelessWidget {
+  final Map<String, String> info;
+  const StreamingPageBottomSheet({super.key, required this.info});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      // mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Align(
+            alignment: Alignment.topRight,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                videoWidget,
-                // Text(time),
+                Text(
+                  info['roadname']!,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                Text(
+                  info['locationmile']!,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                )
               ],
             ),
           ),
         ),
-      ),
+        SingleChildScrollView(
+          child: StreamingPage(info: info),
+        ),
+        Spacer(),
+      ],
     );
   }
 }
