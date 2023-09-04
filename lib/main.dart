@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:realtime_taiwan/cctv.dart';
-import 'package:realtime_taiwan/streaming.dart';
+import 'package:realtime_taiwan/tabs/maps/streaming.dart';
 
-import 'package:realtime_taiwan/tabs/maps.dart';
+import 'package:realtime_taiwan/tabs/maps/maps.dart';
 import 'package:realtime_taiwan/tabs/saved.dart';
 import 'package:realtime_taiwan/tabs/settings.dart';
 
@@ -44,17 +44,17 @@ class _HomePageState extends State<HomePage> {
     {
       'selectedIcon': Icon(Icons.map),
       'icon': Icon(Icons.map_outlined),
-      'label': 'Map'
+      'label': '地圖'
     },
     {
       'selectedIcon': Icon(Icons.bookmark),
       'icon': Icon(Icons.bookmark_outline),
-      'label': 'Saved',
+      'label': '儲存',
     },
     {
       'selectedIcon': Icon(Icons.settings),
       'icon': Icon(Icons.settings_outlined),
-      'label': 'Settings',
+      'label': '設定',
     }
   };
 
@@ -101,6 +101,20 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final navigationRail = NavigationRail(
       leading: Container(),
+      trailing: Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            children: [
+              Spacer(),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.heart_broken_rounded),
+              ),
+            ],
+          ),
+        ),
+      ),
       destinations: [
         ...actions.map((e) {
           return NavigationRailDestination(

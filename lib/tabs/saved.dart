@@ -11,7 +11,7 @@ class SavedPage extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              "Saved",
+              "儲存",
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ],

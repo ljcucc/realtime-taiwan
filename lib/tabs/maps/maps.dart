@@ -8,7 +8,7 @@ import 'package:latlong2/latlong.dart';
 
 // in-app packages
 import 'package:realtime_taiwan/cctv.dart';
-import 'package:realtime_taiwan/streaming.dart';
+import 'package:realtime_taiwan/tabs/maps/streaming.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -55,7 +55,7 @@ class _MapsPageState extends State<MapsPage> {
         return DraggableScrollableSheet(
           maxChildSize: 0.9,
           minChildSize: 0.35,
-          initialChildSize: 0.5,
+          initialChildSize: 0.6,
           expand: false,
           builder: (context, scrollController) {
             return Container(
@@ -93,7 +93,7 @@ class _MapsPageState extends State<MapsPage> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(100)),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary,
                       width: curZoom * 0.4,
                     ),
                     color: Theme.of(context).colorScheme.onPrimary),
