@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
   openStream(e) async {
     showModalBottomSheet(
       useSafeArea: true,
-      isScrollControlled: true,
+      // isScrollControlled: true,
       showDragHandle: true,
       context: context,
       builder: (context) {
@@ -73,7 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(24)),
           ),
-          child: StreamingPage(title: e['surveillancedescription']!, info: e),
+          child: StreamingPage(
+            title: e['surveillancedescription']!,
+            info: e,
+          ),
         );
       },
     );

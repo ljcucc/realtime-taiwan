@@ -14,7 +14,12 @@ void PlatformVideoWidget() {
 class StreamingPage extends StatefulWidget {
   final String title;
   final Map<String, String> info;
-  const StreamingPage({super.key, required this.title, required this.info});
+
+  const StreamingPage({
+    super.key,
+    required this.title,
+    required this.info,
+  });
 
   @override
   State<StreamingPage> createState() => _StreamingPageState();
@@ -37,7 +42,7 @@ class _StreamingPageState extends State<StreamingPage> {
 
   timer() async {
     while (true) {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 30));
       print("update");
 
       // final url = widget.info['videoimageurl']!;
@@ -65,14 +70,14 @@ class _StreamingPageState extends State<StreamingPage> {
             controller: controller,
           )
         : Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(0),
             child: Container(
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
               child: Container(
-                height: 200,
+                // height: 200,
                 width: double.infinity,
                 child: AspectRatio(
                   aspectRatio: 1.7,
@@ -90,6 +95,7 @@ class _StreamingPageState extends State<StreamingPage> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton.filledTonal(
           iconSize: 24,
           // padding: EdgeInsets.all(16),
@@ -112,14 +118,22 @@ class _StreamingPageState extends State<StreamingPage> {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            // Text(time),
-            Expanded(
-              child: videoWidget,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(time),
+                videoWidget,
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
