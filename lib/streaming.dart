@@ -2,46 +2,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:realtime_taiwan/cctv.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class StreamImage extends StatefulWidget {
-  final String url;
-  const StreamImage({super.key, required this.url});
+import 'dart:io' show Platform;
 
-  @override
-  State<StreamImage> createState() => _StreamImageState();
-}
-
-class _StreamImageState extends State<StreamImage> {
-  ImageStreaming? streaming;
-  Uint8List? cached;
-
-  @override
-  void initState() {
-    super.initState();
-
-    imageStream();
-  }
-
-  imageStream() async {
-    streaming = ImageStreaming(
-      url: widget.url,
-      onImage: (List<int> buffer) {
-        print("on image");
-        setState(() {
-          cached = Uint8List.fromList(buffer);
-        });
-      },
-    );
-    streaming!.send();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (cached != null) return Image.memory(cached!);
-    return Container();
-  }
+void PlatformVideoWidget() {
+  if (true) {}
 }
 
 class StreamingPage extends StatefulWidget {
@@ -55,24 +22,104 @@ class StreamingPage extends StatefulWidget {
 
 class _StreamingPageState extends State<StreamingPage> {
   String time = DateTime.now().millisecondsSinceEpoch.toString();
+  late final WebViewController controller;
+  List<String> urlList = [];
+  String? imageBase64;
 
   @override
   void initState() {
     super.initState();
+    if (Platform.isAndroid || Platform.isIOS)
+      controller = WebViewController()
+        ..loadRequest(Uri.parse(widget.info['videostreamurl']!));
+    timer();
+  }
+
+  timer() async {
+    while (true) {
+      await Future.delayed(Duration(seconds: 1));
+      print("update");
+
+      // final url = widget.info['videoimageurl']!;
+      // final base64 = await fetchImgBase64(url + "?${time}");
+      // print("fetched");
+      setState(() {
+        // imageBase64 = base64;
+        time = DateTime.now().millisecondsSinceEpoch.toString();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // var base64Img = imageBase64 != null
+    //     ? Image.memory(
+    //         base64Decode(imageBase64!),
+    //         fit: BoxFit.cover,
+    //         gaplessPlayback: true,
+    //       )
+    //     : Container();
+
+    var videoWidget = Platform.isAndroid && Platform.isIOS
+        ? WebViewWidget(
+            controller: controller,
+          )
+        : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                child: AspectRatio(
+                  aspectRatio: 1.7,
+                  child: Image.network(
+                    "${widget.info['videoimageurl']!}?${time}",
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                  ),
+                ),
+              ),
+            ),
+          );
+
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: Colors.transparent,
+        leading: IconButton.filledTonal(
+          iconSize: 24,
+          // padding: EdgeInsets.all(16),
+          icon: Icon(Icons.close),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Align(
+          alignment: Alignment.topLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.info['roadname']!),
+              Text(
+                widget.info['locationmile']!,
+                style: Theme.of(context).textTheme.bodyMedium,
+              )
+            ],
+          ),
+        ),
       ),
       body: Center(
-        child: Container(
-          constraints: BoxConstraints.expand(),
-          child: StreamImage(
-            url: widget.info['videostreamurl']!,
-          ),
+        child: Column(
+          children: [
+            // Text(time),
+            Expanded(
+              child: videoWidget,
+            ),
+          ],
         ),
       ),
     );
