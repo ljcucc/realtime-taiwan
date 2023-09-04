@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -63,20 +65,30 @@ class _MyHomePageState extends State<MyHomePage> {
   openStream(e) async {
     showModalBottomSheet(
       useSafeArea: true,
-      // isScrollControlled: true,
-      showDragHandle: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      showDragHandle: Platform.isAndroid || Platform.isIOS,
       context: context,
       builder: (context) {
-        return Container(
-          padding: EdgeInsets.all(16).copyWith(top: 0),
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(24)),
-          ),
-          child: StreamingPage(
-            title: e['surveillancedescription']!,
-            info: e,
-          ),
+        return DraggableScrollableSheet(
+          maxChildSize: 1,
+          minChildSize: 0.25,
+          initialChildSize: 0.5,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              padding: EdgeInsets.all(16), //.copyWith(top: 0),
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(24)),
+              ),
+              child: StreamingPage(
+                title: e['surveillancedescription']!,
+                info: e,
+                scrollController: scrollController,
+              ),
+            );
+          },
         );
       },
     );

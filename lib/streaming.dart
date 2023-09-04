@@ -13,12 +13,14 @@ void PlatformVideoWidget() {
 
 class StreamingPage extends StatefulWidget {
   final String title;
+  final ScrollController scrollController;
   final Map<String, String> info;
 
   const StreamingPage({
     super.key,
     required this.title,
     required this.info,
+    required this.scrollController,
   });
 
   @override
@@ -96,18 +98,21 @@ class _StreamingPageState extends State<StreamingPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        leading: IconButton.filledTonal(
-          iconSize: 24,
-          // padding: EdgeInsets.all(16),
-          icon: Icon(Icons.close),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+        leading: Align(
+          alignment: Alignment.center,
+          child: IconButton.filledTonal(
+            iconSize: 24,
+            // padding: EdgeInsets.all(16),
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         title: Align(
-          alignment: Alignment.topLeft,
+          alignment: Alignment.topRight,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(widget.info['roadname']!),
               Text(
@@ -129,8 +134,8 @@ class _StreamingPageState extends State<StreamingPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(time),
                 videoWidget,
+                // Text(time),
               ],
             ),
           ),
