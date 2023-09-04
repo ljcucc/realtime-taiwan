@@ -24,20 +24,20 @@ class StreamingPage extends StatefulWidget {
 
 class _StreamingPageState extends State<StreamingPage> {
   String time = DateTime.now().millisecondsSinceEpoch.toString();
-  late final WebViewController controller;
+  // late final WebViewController controller;
   List<String> urlList = [];
   String? imageBase64;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      var platform = Theme.of(context).platform;
-      if (platform == TargetPlatform.android || platform == TargetPlatform.iOS)
-        controller = WebViewController()
-          ..loadRequest(Uri.parse(widget.info['videostreamurl']!));
-      timer();
-    });
+    // Future.delayed(Duration.zero, () {
+    //   var platform = Theme.of(context).platform;
+    //   if (platform == TargetPlatform.android || platform == TargetPlatform.iOS)
+    //     controller = WebViewController()
+    //       ..loadRequest(Uri.parse(widget.info['videostreamurl']!));
+    // });
+    timer();
   }
 
   timer() async {
@@ -55,32 +55,27 @@ class _StreamingPageState extends State<StreamingPage> {
   @override
   Widget build(BuildContext context) {
     var platform = Theme.of(context).platform;
-    var videoWidget =
-        platform == TargetPlatform.android || platform == TargetPlatform.iOS
-            ? WebViewWidget(
-                controller: controller,
-              )
-            : Padding(
-                padding: const EdgeInsets.all(0),
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  child: Container(
-                    // height: 200,
-                    width: double.infinity,
-                    child: AspectRatio(
-                      aspectRatio: 1.7,
-                      child: Image.network(
-                        "${widget.info['videoimageurl']!}?${time}",
-                        fit: BoxFit.cover,
-                        gaplessPlayback: true,
-                      ),
-                    ),
-                  ),
-                ),
-              );
+    var videoWidget = Padding(
+      padding: const EdgeInsets.all(0),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        child: Container(
+          // height: 200,
+          width: double.infinity,
+          child: AspectRatio(
+            aspectRatio: 1.7,
+            child: Image.network(
+              "${widget.info['videoimageurl']!}?${time}",
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+            ),
+          ),
+        ),
+      ),
+    );
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -151,37 +146,55 @@ class StreamingPageSideSheet extends StatelessWidget {
 
 class StreamingPageBottomSheet extends StatelessWidget {
   final Map<String, String> info;
-  const StreamingPageBottomSheet({super.key, required this.info});
+  final ScrollController controller;
+  const StreamingPageBottomSheet(
+      {super.key, required this.info, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  info['roadname']!,
-                  style: Theme.of(context).textTheme.titleLarge,
+    final platform = Theme.of(context).platform;
+    return Padding(
+      padding: EdgeInsets.all(16).copyWith(
+        top:
+            platform == TargetPlatform.android || platform == TargetPlatform.iOS
+                ? 0
+                : null,
+      ),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        child: SingleChildScrollView(
+          controller: controller,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        info['roadname']!,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(
+                        info['locationmile']!,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      )
+                    ],
+                  ),
                 ),
-                Text(
-                  info['locationmile']!,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                )
-              ],
-            ),
+              ),
+              StreamingPage(info: info),
+            ],
           ),
         ),
-        SingleChildScrollView(
-          child: StreamingPage(info: info),
-        ),
-        Spacer(),
-      ],
+      ),
     );
   }
 }

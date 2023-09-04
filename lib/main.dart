@@ -74,23 +74,20 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) {
         return DraggableScrollableSheet(
-          maxChildSize: 0.5,
-          minChildSize: 0.25,
+          maxChildSize: 0.9,
+          minChildSize: 0.35,
           initialChildSize: 0.5,
           expand: false,
           builder: (context, scrollController) {
             return Container(
-              padding: EdgeInsets.all(16).copyWith(
-                top: platform == TargetPlatform.android ||
-                        platform == TargetPlatform.iOS
-                    ? 0
-                    : null,
-              ),
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(24)),
-              ),
-              child: StreamingPageSideSheet(
+              // padding: EdgeInsets.all(16).copyWith(
+              //   top: platform == TargetPlatform.android ||
+              //           platform == TargetPlatform.iOS
+              //       ? 0
+              //       : null,
+              // ),
+              child: StreamingPageBottomSheet(
+                controller: scrollController,
                 info: e,
               ),
             );
