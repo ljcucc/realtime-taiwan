@@ -78,7 +78,7 @@ class _StreamingPageState extends State<StreamingPage> {
     );
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -153,6 +153,7 @@ class StreamingPageBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final platform = Theme.of(context).platform;
+    final isPhone = MediaQuery.of(context).size.width < 600;
     return Padding(
       padding: EdgeInsets.all(16).copyWith(
         top:
@@ -161,37 +162,53 @@ class StreamingPageBottomSheet extends StatelessWidget {
                 : null,
       ),
       child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-        child: SingleChildScrollView(
-          controller: controller,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.symmetric(horizontal: isPhone ? 0 : 8),
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          child: SingleChildScrollView(
+            controller: controller,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
                     children: [
-                      Text(
-                        info['roadname']!,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              info['roadname']!,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            Text(
+                              info['locationmile']!,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            )
+                          ],
+                        ),
                       ),
-                      Text(
-                        info['locationmile']!,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      )
+                      Spacer(),
+                      (!isPhone
+                          ? IconButton.filledTonal(
+                              icon: Icon(Icons.close),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          : Container()),
                     ],
                   ),
                 ),
-              ),
-              StreamingPage(info: info),
-            ],
+                StreamingPage(info: info),
+              ],
+            ),
           ),
         ),
       ),
