@@ -6,7 +6,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:realtime_taiwan/cctv.dart';
 import 'package:realtime_taiwan/streaming.dart';
-import 'dart:math';
+
+import 'package:realtime_taiwan/tabs/maps.dart';
+import 'package:realtime_taiwan/tabs/saved.dart';
+import 'package:realtime_taiwan/tabs/settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,172 +27,127 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 238, 255, 6)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: '台灣即時影像'),
+      home: HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  CCTVList? list;
-  double curZoom = 10;
-  @override
-  void initState() {
-    super.initState();
+class _HomePageState extends State<HomePage> {
+  final actions = {
+    {
+      'selectedIcon': Icon(Icons.map),
+      'icon': Icon(Icons.map_outlined),
+      'label': 'Map'
+    },
+    {
+      'selectedIcon': Icon(Icons.bookmark),
+      'icon': Icon(Icons.bookmark_outline),
+      'label': 'Saved',
+    },
+    {
+      'selectedIcon': Icon(Icons.settings),
+      'icon': Icon(Icons.settings_outlined),
+      'label': 'Settings',
+    }
+  };
 
-    loadXML();
-  }
+  int currentPageIndex = 0;
 
-  loadXML() async {
-    final str = await DefaultAssetBundle.of(context)
-        .loadString("assets/opendataCCTVs.xml");
-    setState(() {
-      list = CCTVList(str);
-    });
-  }
-
-  setCurZoom(double zoom) async {
-    await Future.delayed(Duration(milliseconds: 100));
-    setState(() {
-      curZoom = zoom;
-    });
-  }
-
-  openStream(e) async {
+  bool isPhone(context) {
     final platform = Theme.of(context).platform;
-    showModalBottomSheet(
-      useSafeArea: true,
-      isScrollControlled: true,
-      isDismissible: true,
-      showDragHandle:
-          platform == TargetPlatform.android || platform == TargetPlatform.iOS,
-      context: context,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          maxChildSize: 0.9,
-          minChildSize: 0.35,
-          initialChildSize: 0.5,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              // padding: EdgeInsets.all(16).copyWith(
-              //   top: platform == TargetPlatform.android ||
-              //           platform == TargetPlatform.iOS
-              //       ? 0
-              //       : null,
-              // ),
-              child: StreamingPageBottomSheet(
-                controller: scrollController,
-                info: e,
-              ),
-            );
-          },
-        );
-      },
-    );
+    final isDesktop = [
+      TargetPlatform.macOS,
+      TargetPlatform.linux,
+      TargetPlatform.windows
+    ].contains(platform);
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final isPhone = (isDesktop && (deviceWidth < 800)) ||
+        (!isDesktop && (deviceWidth < 1000));
+    return isPhone;
   }
 
-  generateMarks(context) {
-    final result = (list?.list ?? [])
-        .map((e) {
-          final lat = double.parse(e['positionlat']!);
-          final lon = double.parse(e['positionlon']!);
+  Widget switchPage(index) {
+    switch (index) {
+      case 0:
+        return MapsPage();
+      case 1:
+        return SavedPage();
+      case 2:
+        return SettingsPage();
+    }
 
-          if (curZoom < 9) {
-            return null;
-          }
+    return Container();
+  }
 
-          // if (curZoom < 15) {
-          return Marker(
-            point: LatLng(lat, lon),
-            width: (pow(curZoom, 1.35) as double),
-            height: (pow(curZoom, 1.35) as double),
-            builder: (context) => GestureDetector(
-              onTap: () {
-                openStream(e);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(100)),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: curZoom * 0.4,
-                    ),
-                    color: Theme.of(context).colorScheme.onPrimary),
-              ),
-            ),
-          );
-          // }
-
-          return Marker(
-            point: LatLng(lat, lon),
-            width: 5 * curZoom,
-            height: 5 * curZoom,
-            builder: (context) => IconButton.filled(
-              icon: const Icon(
-                Icons.camera,
-              ),
-              onPressed: () {
-                openStream(e);
-              },
-            ),
-          );
-        })
-        .toList()
-        .where((e) => e != null);
-    return result;
+  Widget? switchFAB(int index) {
+    switch (index) {
+      case 0:
+        return FloatingActionButton(
+          child: Icon(Icons.my_location),
+          onPressed: () {},
+        );
+    }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final navigationRail = NavigationRail(
+      leading: Container(),
+      destinations: [
+        ...actions.map((e) {
+          return NavigationRailDestination(
+            icon: e['icon'] as Icon,
+            label: Text(e['label'] as String),
+            selectedIcon: e['selectedIcon'] as Icon,
+          );
+        }).toList(),
+      ],
+      labelType: NavigationRailLabelType.all,
+      selectedIndex: currentPageIndex,
+      onDestinationSelected: (index) {
+        setState(() {
+          currentPageIndex = index;
+        });
+      },
+    );
+    final buttomNavigationBar = NavigationBar(
+      onDestinationSelected: (int index) {
+        setState(() {
+          currentPageIndex = index;
+        });
+      },
+      selectedIndex: currentPageIndex,
+      destinations: <Widget>[
+        ...actions.map((e) {
+          return NavigationDestination(
+            icon: e['icon'] as Icon,
+            label: e['label'] as String,
+            selectedIcon: e['selectedIcon'] as Icon,
+          );
+        }).toList(),
+      ],
+    );
+
     return Scaffold(
-      // appBar: AppBar(
-      //   // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      //   title: Text(widget.title),
-      // ),
-      body: FlutterMap(
-        options: MapOptions(
-          center: LatLng(23.5, 120.9738819),
-          zoom: 10,
-          maxZoom: 18,
-          onMapEvent: (p0) {
-            setCurZoom(p0.zoom);
-          },
-        ),
+      body: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.onPrimaryContainer,
-                BlendMode.hue),
-            child: /*ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.saturation),
-              child:*/
-                TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.example.app',
-              //),
-            ),
-          ),
-          MarkerLayer(
-            markers: [
-              ...generateMarks(context),
-            ],
-          ),
+          !isPhone(context) ? navigationRail : Container(),
+          Expanded(
+            child: switchPage(currentPageIndex),
+          )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'search',
-        child: const Icon(Icons.search),
-      ),
+      bottomNavigationBar: isPhone(context) ? buttomNavigationBar : null,
+      floatingActionButton: switchFAB(currentPageIndex),
     );
   }
 }
