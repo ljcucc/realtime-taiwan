@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -100,21 +101,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final navigationRail = NavigationRail(
-      leading: Container(),
-      trailing: Expanded(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            children: [
-              Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.heart_broken_rounded),
-              ),
-            ],
-          ),
-        ),
-      ),
+      groupAlignment: 0,
       destinations: [
         ...actions.map((e) {
           return NavigationRailDestination(

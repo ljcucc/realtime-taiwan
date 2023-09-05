@@ -10,19 +10,19 @@ void PlatformVideoWidget() {
   if (true) {}
 }
 
-class StreamingPage extends StatefulWidget {
+class StreamingImage extends StatefulWidget {
   final Map<String, String> info;
 
-  const StreamingPage({
+  const StreamingImage({
     super.key,
     required this.info,
   });
 
   @override
-  State<StreamingPage> createState() => _StreamingPageState();
+  State<StreamingImage> createState() => _StreamingPageState();
 }
 
-class _StreamingPageState extends State<StreamingPage> {
+class _StreamingPageState extends State<StreamingImage> {
   String time = DateTime.now().millisecondsSinceEpoch.toString();
   // late final WebViewController controller;
   List<String> urlList = [];
@@ -54,7 +54,32 @@ class _StreamingPageState extends State<StreamingPage> {
 
   @override
   Widget build(BuildContext context) {
-    var platform = Theme.of(context).platform;
+    var streamingImage = AspectRatio(
+      aspectRatio: 1.7,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.network(
+              "${widget.info['videoimageurl']!}?${time}",
+              fit: BoxFit.cover,
+              gaplessPlayback: true,
+            ),
+          ),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: Text(
+              "公路局即時影像",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: Colors.white.withOpacity(.35)),
+            ),
+          )
+        ],
+      ),
+    );
+
     var videoWidget = Padding(
       padding: const EdgeInsets.all(0),
       child: Container(
@@ -65,14 +90,7 @@ class _StreamingPageState extends State<StreamingPage> {
         child: Container(
           // height: 200,
           width: double.infinity,
-          child: AspectRatio(
-            aspectRatio: 1.7,
-            child: Image.network(
-              "${widget.info['videoimageurl']!}?${time}",
-              fit: BoxFit.cover,
-              gaplessPlayback: true,
-            ),
-          ),
+          child: streamingImage,
         ),
       ),
     );
@@ -93,52 +111,6 @@ class _StreamingPageState extends State<StreamingPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class StreamingPageSideSheet extends StatelessWidget {
-  final Map<String, String> info;
-  const StreamingPageSideSheet({
-    super.key,
-    required this.info,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leading: Align(
-          alignment: Alignment.center,
-          child: IconButton.filledTonal(
-            iconSize: 24,
-            // padding: EdgeInsets.all(16),
-            icon: Icon(Icons.close),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        title: Align(
-          alignment: Alignment.topRight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(info['roadname']!),
-              Text(
-                info['locationmile']!,
-                style: Theme.of(context).textTheme.bodyMedium,
-              )
-            ],
-          ),
-        ),
-      ),
-      body: StreamingPage(
-        info: info,
       ),
     );
   }
@@ -195,23 +167,57 @@ class StreamingPageBottomSheet extends StatelessWidget {
                         ),
                       ),
                       Spacer(),
+                      const Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        child: BookmarkButton(),
+                      ),
                       (!isPhone
-                          ? IconButton.filledTonal(
-                              icon: Icon(Icons.close),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: IconButton.filledTonal(
+                                icon: Icon(Icons.close),
+                                tooltip: "返回",
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
                             )
                           : Container()),
                     ],
                   ),
                 ),
-                StreamingPage(info: info),
+                StreamingImage(info: info),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class BookmarkButton extends StatefulWidget {
+  const BookmarkButton({super.key});
+
+  @override
+  State<BookmarkButton> createState() => _BookmarkButtonState();
+}
+
+class _BookmarkButtonState extends State<BookmarkButton> {
+  bool saved = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          saved = !saved;
+        });
+      },
+      isSelected: saved,
+      selectedIcon: Icon(Icons.bookmark),
+      icon: Icon(Icons.bookmark_border),
+      tooltip: "儲存",
     );
   }
 }
