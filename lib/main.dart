@@ -1,11 +1,6 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:realtime_taiwan/cctv.dart';
-import 'package:realtime_taiwan/tabs/maps/streaming.dart';
+import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/pages/loading.dart';
 
 import 'package:realtime_taiwan/tabs/maps/maps.dart';
 import 'package:realtime_taiwan/tabs/saved.dart';
@@ -13,6 +8,7 @@ import 'package:realtime_taiwan/tabs/settings.dart';
 
 void main() {
   runApp(const MyApp());
+  // database.dispose();
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: '台灣即時影像',
       theme: ThemeData(
         colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 238, 255, 6)),
+            ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 26, 205, 195)),
         useMaterial3: true,
       ),
       home: HomePage(),
@@ -60,6 +56,36 @@ class _HomePageState extends State<HomePage> {
   };
 
   int currentPageIndex = 0;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration(seconds: 0), () async {
+      await Navigator.of(context).push(PageRouteBuilder(
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration(milliseconds: 200),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final tween = Tween(begin: Offset(0.0, 0.05), end: Offset.zero);
+          return /*SlideTransition(
+            position: animation.drive(tween),
+            child:*/
+              FadeTransition(
+            opacity: animation,
+            child: child,
+            //),
+          );
+        },
+        pageBuilder: (context, animation1, animation2) {
+          return LoadingPage();
+        },
+      ));
+      setState(() {
+        loading = false;
+      });
+    });
+  }
 
   bool isPhone(context) {
     final platform = Theme.of(context).platform;
@@ -138,15 +164,17 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
-      body: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          !isPhone(context) ? navigationRail : Container(),
-          Expanded(
-            child: switchPage(currentPageIndex),
-          )
-        ],
-      ),
+      body: loading
+          ? Container()
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                !isPhone(context) ? navigationRail : Container(),
+                Expanded(
+                  child: switchPage(currentPageIndex),
+                )
+              ],
+            ),
       bottomNavigationBar: isPhone(context) ? buttomNavigationBar : null,
       floatingActionButton: switchFAB(currentPageIndex),
     );

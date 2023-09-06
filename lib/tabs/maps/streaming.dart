@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:realtime_taiwan/cctv.dart';
+import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void PlatformVideoWidget() {
@@ -11,7 +11,7 @@ void PlatformVideoWidget() {
 }
 
 class StreamingImage extends StatefulWidget {
-  final Map<String, String> info;
+  final CCTVInfo info;
 
   const StreamingImage({
     super.key,
@@ -60,7 +60,7 @@ class _StreamingPageState extends State<StreamingImage> {
         children: [
           Positioned.fill(
             child: Image.network(
-              "${widget.info['videoimageurl']!}?${time}",
+              "${widget.info.videoImageUrl}?${time}",
               fit: BoxFit.cover,
               gaplessPlayback: true,
             ),
@@ -117,10 +117,10 @@ class _StreamingPageState extends State<StreamingImage> {
 }
 
 class StreamingPageBottomSheet extends StatelessWidget {
-  final Map<String, String> info;
+  final CCTVItem item;
   final ScrollController controller;
   const StreamingPageBottomSheet(
-      {super.key, required this.info, required this.controller});
+      {super.key, required this.item, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -156,11 +156,11 @@ class StreamingPageBottomSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              info['roadname']!,
+                              item.info.roadName!,
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                             Text(
-                              info['locationmile']!,
+                              item.info.locationMile,
                               style: Theme.of(context).textTheme.bodyMedium,
                             )
                           ],
@@ -186,7 +186,17 @@ class StreamingPageBottomSheet extends StatelessWidget {
                     ],
                   ),
                 ),
-                StreamingImage(info: info),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return FullscreenViewPage(info: item.info);
+                      },
+                      fullscreenDialog: true,
+                    ));
+                  },
+                  child: StreamingImage(info: item.info),
+                ),
               ],
             ),
           ),
@@ -208,7 +218,8 @@ class _BookmarkButtonState extends State<BookmarkButton> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return IconButton.outlined(
+      iconSize: 24,
       onPressed: () {
         setState(() {
           saved = !saved;
@@ -218,6 +229,47 @@ class _BookmarkButtonState extends State<BookmarkButton> {
       selectedIcon: Icon(Icons.bookmark),
       icon: Icon(Icons.bookmark_border),
       tooltip: "儲存",
+    );
+  }
+}
+
+class FullscreenViewPage extends StatelessWidget {
+  final CCTVInfo info;
+  const FullscreenViewPage({
+    super.key,
+    required this.info,
+  });
+
+  close(context) {
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        title: Text(info.roadName!),
+        // leading: IconButton(
+        //   icon: Icon(Icons.close),
+        //   onPressed: () {
+        //     Navigator.of(context).pop();
+        //   },
+        // ),
+      ),
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: GestureDetector(
+          child: InteractiveViewer(
+            child: Center(
+              child: StreamingImage(
+                info: info,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

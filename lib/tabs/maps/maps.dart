@@ -7,8 +7,64 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 // in-app packages
-import 'package:realtime_taiwan/cctv.dart';
+import 'package:realtime_taiwan/data/cctv.dart';
+import 'package:realtime_taiwan/data/database.dart';
 import 'package:realtime_taiwan/tabs/maps/streaming.dart';
+
+class PointMarker extends StatefulWidget {
+  final double zoomLevel;
+  final VoidCallback onTap;
+  const PointMarker({
+    super.key,
+    required this.zoomLevel,
+    required this.onTap,
+  });
+
+  @override
+  State<PointMarker> createState() => _PointMarkerState();
+}
+
+class _PointMarkerState extends State<PointMarker> {
+  bool onHover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (event) => setState(() {
+        onHover = true;
+      }),
+      onExit: (event) => setState(() {
+        onHover = false;
+      }),
+      onHover: (event) => setState(() {
+        onHover = true;
+      }),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedScale(
+          scale: onHover ? 1.1 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(100)),
+                boxShadow: [
+                  // BoxShadow(
+                  //   color: Colors.black.withOpacity(.35),
+                  //   blurRadius: onHover ? 5 : 0,
+                  //   spreadRadius: 0,
+                  // )
+                ],
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: widget.zoomLevel * 0.4,
+                ),
+                color: Theme.of(context).colorScheme.onPrimary),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -18,7 +74,7 @@ class MapsPage extends StatefulWidget {
 }
 
 class _MapsPageState extends State<MapsPage> {
-  CCTVList? list;
+  List<CCTVItem>? list;
   double curZoom = 10;
   @override
   void initState() {
@@ -31,7 +87,10 @@ class _MapsPageState extends State<MapsPage> {
     final str = await DefaultAssetBundle.of(context)
         .loadString("assets/opendataCCTVs.xml");
     setState(() {
-      list = CCTVList(str);
+      // list = CCTVListParser(str).list;
+      list = cctvList.all;
+      print("hello");
+      print(list!.length);
     });
   }
 
@@ -42,7 +101,7 @@ class _MapsPageState extends State<MapsPage> {
     });
   }
 
-  openStream(e) async {
+  openStream(CCTVItem item) async {
     final platform = Theme.of(context).platform;
     showModalBottomSheet(
       useSafeArea: true,
@@ -61,7 +120,7 @@ class _MapsPageState extends State<MapsPage> {
             return Container(
               child: StreamingPageBottomSheet(
                 controller: scrollController,
-                info: e,
+                item: item,
               ),
             );
           },
@@ -71,50 +130,25 @@ class _MapsPageState extends State<MapsPage> {
   }
 
   generateMarks(context) {
-    final result = (list?.list ?? [])
+    final result = (list ?? [])
         .map((e) {
-          final lat = double.parse(e['positionlat']!);
-          final lon = double.parse(e['positionlon']!);
-
           if (curZoom < 9) {
             return null;
           }
 
           // if (curZoom < 15) {
           return Marker(
-            point: LatLng(lat, lon),
+            point: e.loc,
             width: (pow(curZoom, 1.35) as double),
             height: (pow(curZoom, 1.35) as double),
-            builder: (context) => GestureDetector(
+            builder: (context) => PointMarker(
+              zoomLevel: curZoom,
               onTap: () {
                 openStream(e);
               },
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(100)),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.secondary,
-                      width: curZoom * 0.4,
-                    ),
-                    color: Theme.of(context).colorScheme.onPrimary),
-              ),
             ),
           );
           // }
-
-          return Marker(
-            point: LatLng(lat, lon),
-            width: 5 * curZoom,
-            height: 5 * curZoom,
-            builder: (context) => IconButton.filled(
-              icon: const Icon(
-                Icons.camera,
-              ),
-              onPressed: () {
-                openStream(e);
-              },
-            ),
-          );
         })
         .toList()
         .where((e) => e != null);
@@ -135,12 +169,14 @@ class _MapsPageState extends State<MapsPage> {
       children: [
         ColorFiltered(
           colorFilter: ColorFilter.mode(
-              Theme.of(context).colorScheme.onPrimaryContainer, BlendMode.hue),
+            Theme.of(context).colorScheme.onPrimaryContainer,
+            BlendMode.hue,
+          ),
           child: /*ColorFiltered(
               colorFilter: ColorFilter.mode(Colors.grey, BlendMode.saturation),
               child:*/
               TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
             userAgentPackageName: 'com.example.app',
             //),
           ),
