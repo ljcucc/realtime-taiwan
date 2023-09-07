@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart' as flutter;
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
@@ -64,7 +66,6 @@ class CCTVItem {
   CCTVItem({required this.id, required this.db});
 
   _fetchLoc() {
-    print("fetching");
     final row = db.select(
       "SELECT positionlon, positionlat FROM cctvs WHERE id=?;",
       [id],
@@ -176,7 +177,7 @@ class CCTVList {
   }
 
   _initDB() {
-    db = sqlite3.openInMemory();
+    // db = sqlite3.openInMemory();
     // _db = sqlite3.open("cctv.db");
     db.execute(dbSchema);
   }
@@ -201,8 +202,12 @@ class CCTVList {
 }
 
 Future<String> getOpendataCCTV(context) async {
-  final xmlString = await flutter.DefaultAssetBundle.of(context)
-      .loadString("assets/opendataCCTVs.xml");
+  print("fetching xml from web...");
+  final respone =
+      await http.get(Uri.parse('http://211.23.44.7/opendataCCTVs.xml'));
+  final xmlString = utf8.decode(respone.bodyBytes);
+  // final xmlString = await flutter.DefaultAssetBundle.of(context)
+  //     .loadString("assets/opendataCCTVs.xml");
   return xmlString;
 }
 

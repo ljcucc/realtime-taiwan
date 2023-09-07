@@ -160,7 +160,7 @@ class StreamingPageBottomSheet extends StatelessWidget {
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                             Text(
-                              item.info.locationMile,
+                              "${item.info.locationMile}・${item.info.surveillanceDescription}",
                               style: Theme.of(context).textTheme.bodyMedium,
                             )
                           ],

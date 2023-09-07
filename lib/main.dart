@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
 import 'package:realtime_taiwan/pages/loading.dart';
 
@@ -62,6 +63,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    initScreen();
+  }
+
+  void initScreen() {
     Future.delayed(Duration(seconds: 0), () async {
       await Navigator.of(context).push(PageRouteBuilder(
         transitionDuration: Duration.zero,
@@ -78,7 +83,18 @@ class _HomePageState extends State<HomePage> {
           );
         },
         pageBuilder: (context, animation1, animation2) {
-          return LoadingPage();
+          return LoadingPage(
+            onLoading: () async {
+              await initDatabase();
+              if (cctvList.isEmpty) {
+                final xmlString = await getOpendataCCTV(context);
+                // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
+                cctvList.loadXML(xmlString);
+                print("length of db: ${cctvList.length}");
+              }
+              print("done");
+            },
+          );
         },
       ));
       setState(() {

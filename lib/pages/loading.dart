@@ -4,7 +4,8 @@ import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
 
 class LoadingPage extends StatefulWidget {
-  const LoadingPage({super.key});
+  final Future<void> Function() onLoading;
+  const LoadingPage({super.key, required this.onLoading});
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();
@@ -14,17 +15,11 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   void initState() {
     super.initState();
-    initDB();
+    _loading();
   }
 
-  initDB() async {
-    if (cctvList.isEmpty) {
-      final xmlString = await getOpendataCCTV(context);
-      // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
-      cctvList.loadXML(xmlString);
-      print("length of db: ${cctvList.length}");
-    }
-    print("done");
+  _loading() async {
+    await widget.onLoading();
     Navigator.of(context).pop();
   }
 
