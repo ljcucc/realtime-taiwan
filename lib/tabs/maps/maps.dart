@@ -84,10 +84,7 @@ class _MapsPageState extends State<MapsPage> {
   }
 
   loadXML() async {
-    final str = await DefaultAssetBundle.of(context)
-        .loadString("assets/opendataCCTVs.xml");
     setState(() {
-      // list = CCTVListParser(str).list;
       list = cctvList.all;
       print("hello");
       print(list!.length);
@@ -176,7 +173,9 @@ class _MapsPageState extends State<MapsPage> {
               colorFilter: ColorFilter.mode(Colors.grey, BlendMode.saturation),
               child:*/
               TileLayer(
+            // urlTemplate: "assets/tiles_small/{z}/{x}/{y}.jpg",
             urlTemplate: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+            // tileProvider: AssetTileProvider(),
             userAgentPackageName: 'com.example.app',
             //),
           ),

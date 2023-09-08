@@ -66,34 +66,33 @@ class _HomePageState extends State<HomePage> {
     initScreen();
   }
 
+  onLoading() async {
+    await initDatabase();
+    if (cctvList.isEmpty) {
+      final xmlString = await getOpendataCCTV(context);
+      // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
+      cctvList.loadXML(xmlString);
+      print("length of db: ${cctvList.length}");
+    }
+    print("done");
+  }
+
   void initScreen() {
     Future.delayed(Duration(seconds: 0), () async {
+      // push loading screen with no animation
       await Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration(milliseconds: 200),
+        transitionDuration: Duration.zero, // no animation with zero duration
+        reverseTransitionDuration:
+            Duration(milliseconds: 200), // and exit with animation
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          final tween = Tween(begin: Offset(0.0, 0.05), end: Offset.zero);
-          return /*SlideTransition(
-            position: animation.drive(tween),
-            child:*/
-              FadeTransition(
+          return FadeTransition(
             opacity: animation,
             child: child,
-            //),
           );
         },
         pageBuilder: (context, animation1, animation2) {
           return LoadingPage(
-            onLoading: () async {
-              await initDatabase();
-              if (cctvList.isEmpty) {
-                final xmlString = await getOpendataCCTV(context);
-                // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
-                cctvList.loadXML(xmlString);
-                print("length of db: ${cctvList.length}");
-              }
-              print("done");
-            },
+            onLoading: () async => await onLoading(),
           );
         },
       ));

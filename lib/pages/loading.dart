@@ -4,8 +4,13 @@ import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
 
 class LoadingPage extends StatefulWidget {
+  /// will call this aysnc function while loading screen
   final Future<void> Function() onLoading;
-  const LoadingPage({super.key, required this.onLoading});
+
+  const LoadingPage({
+    super.key,
+    required this.onLoading,
+  });
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();

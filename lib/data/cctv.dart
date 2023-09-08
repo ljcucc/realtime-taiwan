@@ -9,6 +9,7 @@ import 'package:realtime_taiwan/data/database.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:latlong2/latlong.dart';
 
+/// XML to dictionary data parser for openData XML
 class CCTVListParser {
   List<Map<String, String>> list = [];
 
@@ -65,6 +66,7 @@ class CCTVItem {
 
   CCTVItem({required this.id, required this.db});
 
+  /// auto fetch position geo data if not cached
   _fetchLoc() {
     final row = db.select(
       "SELECT positionlon, positionlat FROM cctvs WHERE id=?;",
@@ -73,6 +75,7 @@ class CCTVItem {
     _loc = LatLng(row['positionlat'] as double, row['positionlon'] as double);
   }
 
+  /// auto fetch rest of the infomation from database
   _fetchInfo() {
     final row = db.select(
       """SELECT 
@@ -88,7 +91,6 @@ class CCTVItem {
      FROM cctvs WHERE id=?""",
       [id],
     )[0];
-    print("stream: ${row['videostreamurl']}, image: ${row['videoimageurl']}");
     _info = CCTVInfo(
       locationMile: row['locationmile'],
       roadClass: row['roadclass'],
@@ -113,8 +115,11 @@ class CCTVItem {
   }
 }
 
+/// a manager that will create database, dump all parsed xml data to database, get List<CCTVItem> from it.
 class CCTVList {
   // TODO: fix this madness
+
+  /// insert schema used to insert a complete row into sqlite database
   final appendSchema = """INSERT INTO cctvs ( 
       cctvid,
       linkid,
@@ -130,6 +135,8 @@ class CCTVList {
       roaddirection, 
       locationmile
     )  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);""";
+
+  /// Database schema
   final dbSchema = """CREATE TABLE IF NOT EXISTS cctvs (
       id INTEGER PRIMARY KEY,
       cctvid TEXT NOT NULL,
@@ -153,6 +160,7 @@ class CCTVList {
     _initDB();
   }
 
+  /// load XMLString, parse it and dump into database
   loadXML(String xmlString) {
     final parser = CCTVListParser(xmlString);
     final insertRow = db.prepare(appendSchema);
@@ -177,15 +185,15 @@ class CCTVList {
   }
 
   _initDB() {
-    // db = sqlite3.openInMemory();
-    // _db = sqlite3.open("cctv.db");
     db.execute(dbSchema);
   }
 
+  /// get CCTVItem List with init state
   List<CCTVItem> get all {
     return _ids.map((id) => CCTVItem(id: id, db: db)).toList();
   }
 
+  /// get total length of database
   int get length {
     return db.select("SELECT COUNT(*) FROM cctvs")[0]['COUNT(*)'];
   }
@@ -201,19 +209,11 @@ class CCTVList {
   }
 }
 
+/// get data based on https://data.gov.tw/en/datasets/29817
 Future<String> getOpendataCCTV(context) async {
   print("fetching xml from web...");
   final respone =
       await http.get(Uri.parse('http://211.23.44.7/opendataCCTVs.xml'));
   final xmlString = utf8.decode(respone.bodyBytes);
-  // final xmlString = await flutter.DefaultAssetBundle.of(context)
-  //     .loadString("assets/opendataCCTVs.xml");
   return xmlString;
 }
-
-// Future<String> fetchImgBase64(String imageUrl) async {
-//   http.Response response = await http
-//       .get(Uri.parse(imageUrl), headers: {'Cache-Control': 'no-store'});
-//   final bytes = response.bodyBytes;
-//   return base64Encode(bytes);
-// }

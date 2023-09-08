@@ -149,8 +149,8 @@ class StreamingPageBottomSheet extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Row(
                     children: [
-                      Align(
-                        alignment: Alignment.topLeft,
+                      Expanded(
+                        flex: 1,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,13 +162,17 @@ class StreamingPageBottomSheet extends StatelessWidget {
                             Text(
                               "${item.info.locationMile}・${item.info.surveillanceDescription}",
                               style: Theme.of(context).textTheme.bodyMedium,
+                              maxLines: 2,
+                              softWrap: false,
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.fade,
                             )
                           ],
                         ),
                       ),
-                      Spacer(),
+                      // Spacer(),
                       const Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
+                        padding: const EdgeInsets.only(left: 24),
                         child: BookmarkButton(),
                       ),
                       (!isPhone
