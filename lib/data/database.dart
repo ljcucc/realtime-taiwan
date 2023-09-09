@@ -11,13 +11,13 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 late Database database;
 late CCTVList cctvList;
-// late BookmarkList bookmarkList;
+late BookmarkList bookmarkList;
 
 initDatabase() async {
   final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
   database = sqlite3.open(path.join(appDocumentsDir.path, "cctvs.sqlite3"));
   cctvList = CCTVList(db: database);
-  // bookmarkList = BookmarkList(db: database);
+  bookmarkList = BookmarkList(db: database);
 }
 
 // final database = sqlite3.openInMemory();

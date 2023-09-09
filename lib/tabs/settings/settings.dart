@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/tabs/settings/map_selector_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -131,19 +133,22 @@ class SettingsPage extends StatelessWidget {
                         subtitle: "資料集已載入",
                         icon: Icon(Icons.donut_large_outlined),
                       ),
-                      SettingsSection(
-                        title: "地圖",
-                        subtitle: "OpenStreetMap",
-                        icon: Icon(Icons.map),
-                        onTap: () {
-                          showDialog<String>(
-                            context: context,
-                            builder: (context) {
-                              return MapSelectorDialog();
-                            },
-                          );
-                        },
-                      ),
+                      Consumer<MapSourceModel>(
+                          builder: (context, model, child) {
+                        return SettingsSection(
+                          title: "地圖",
+                          subtitle: "Google Maps" ?? model.source,
+                          icon: Icon(Icons.map),
+                          onTap: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (context) {
+                                return MapSelectorDialog();
+                              },
+                            );
+                          },
+                        );
+                      }),
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: Divider(),

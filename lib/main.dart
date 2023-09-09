@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/pages/loading.dart';
 
 import 'package:realtime_taiwan/tabs/maps/maps.dart';
@@ -17,15 +19,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Realtime Taiwan',
-      theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 26, 205, 195)),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => MapSourceModel())
+      ],
+      child: MaterialApp(
+        title: 'Realtime Taiwan',
+        theme: ThemeData(
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 26, 205, 195)),
+          useMaterial3: true,
+        ),
+        home: HomePage(),
+        debugShowCheckedModeBanner: false,
       ),
-      home: HomePage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:realtime_taiwan/data/map_source.dart';
 
 enum MapTileOptions {
   OpenStreetMap,
@@ -28,6 +30,8 @@ class _MapSelectorDialogState extends State<MapSelectorDialog> {
             onChanged: (value) {
               setState(() {
                 groupValue = value!;
+                Provider.of<MapSourceModel>(context, listen: false).setSource(
+                    "'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}");
               });
             },
           ),
@@ -38,6 +42,8 @@ class _MapSelectorDialogState extends State<MapSelectorDialog> {
             onChanged: (value) {
               setState(() {
                 groupValue = value!;
+                Provider.of<MapSourceModel>(context, listen: false).setSource(
+                    "https://tile.openstreetmap.org/{z}/{x}/{y}.png");
               });
             },
           ),

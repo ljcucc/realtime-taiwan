@@ -5,6 +5,7 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 
 import 'package:http/http.dart' as http;
+import 'package:realtime_taiwan/data/bookmark.dart';
 import 'package:realtime_taiwan/data/database.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:latlong2/latlong.dart';
@@ -112,6 +113,10 @@ class CCTVItem {
   CCTVInfo get info {
     if (_info == null) _fetchInfo();
     return _info!;
+  }
+
+  BookmarkItem get bookmark {
+    return BookmarkItem(db: db, cctvId: id);
   }
 }
 

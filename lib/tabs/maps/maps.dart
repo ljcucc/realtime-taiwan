@@ -9,7 +9,10 @@ import 'package:latlong2/latlong.dart';
 // in-app packages
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/tabs/maps/streaming.dart';
+
+import "package:provider/provider.dart";
 
 class PointMarker extends StatefulWidget {
   final double zoomLevel;
@@ -169,16 +172,13 @@ class _MapsPageState extends State<MapsPage> {
             Theme.of(context).colorScheme.onPrimaryContainer,
             BlendMode.hue,
           ),
-          child: /*ColorFiltered(
-              colorFilter: ColorFilter.mode(Colors.grey, BlendMode.saturation),
-              child:*/
-              TileLayer(
-            // urlTemplate: "assets/tiles_small/{z}/{x}/{y}.jpg",
-            urlTemplate: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-            // tileProvider: AssetTileProvider(),
-            userAgentPackageName: 'com.example.app',
-            //),
-          ),
+          child: Consumer<MapSourceModel>(builder: (context, model, child) {
+            return TileLayer(
+              urlTemplate: model.source ??
+                  'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+              userAgentPackageName: 'com.example.app',
+            );
+          }),
         ),
         MarkerLayer(
           markers: [

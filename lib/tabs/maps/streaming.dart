@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:realtime_taiwan/data/bookmark.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 void PlatformVideoWidget() {
   if (true) {}
@@ -171,9 +171,11 @@ class StreamingPageBottomSheet extends StatelessWidget {
                         ),
                       ),
                       // Spacer(),
-                      const Padding(
-                        padding: const EdgeInsets.only(left: 24),
-                        child: BookmarkButton(),
+                      Padding(
+                        padding: EdgeInsets.only(left: 24),
+                        child: BookmarkButton(
+                          bookmark: item.bookmark,
+                        ),
                       ),
                       (!isPhone
                           ? Padding(
@@ -211,7 +213,9 @@ class StreamingPageBottomSheet extends StatelessWidget {
 }
 
 class BookmarkButton extends StatefulWidget {
-  const BookmarkButton({super.key});
+  final BookmarkItem bookmark;
+
+  const BookmarkButton({super.key, required this.bookmark});
 
   @override
   State<BookmarkButton> createState() => _BookmarkButtonState();
@@ -221,13 +225,33 @@ class _BookmarkButtonState extends State<BookmarkButton> {
   bool saved = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    saved = widget.bookmark.isSaved;
+  }
+
+  void toggle() {
+    setState(() {
+      saved = !saved;
+    });
+
+    if (saved) {
+      widget.bookmark.add();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("地點已儲存")),
+      );
+    } else {
+      widget.bookmark.remove();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return IconButton.outlined(
       iconSize: 24,
       onPressed: () {
-        setState(() {
-          saved = !saved;
-        });
+        toggle();
       },
       isSelected: saved,
       selectedIcon: Icon(Icons.bookmark),
