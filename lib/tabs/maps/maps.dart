@@ -101,34 +101,6 @@ class _MapsPageState extends State<MapsPage> {
     });
   }
 
-  openStream(CCTVItem item) async {
-    final platform = Theme.of(context).platform;
-    showModalBottomSheet(
-      useSafeArea: true,
-      isScrollControlled: true,
-      isDismissible: true,
-      showDragHandle:
-          platform == TargetPlatform.android || platform == TargetPlatform.iOS,
-      context: context,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          maxChildSize: 0.9,
-          minChildSize: 0.35,
-          initialChildSize: 0.6,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              child: StreamingPageBottomSheet(
-                controller: scrollController,
-                item: item,
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   generateMarks(context) {
     final result = (list ?? [])
         .map((e) {
@@ -144,7 +116,7 @@ class _MapsPageState extends State<MapsPage> {
             builder: (context) => PointMarker(
               zoomLevel: curZoom,
               onTap: () {
-                openStream(e);
+                openStream(item: e, context: context);
               },
             ),
           );
