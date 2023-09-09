@@ -5,7 +5,7 @@ import 'package:realtime_taiwan/pages/loading.dart';
 
 import 'package:realtime_taiwan/tabs/maps/maps.dart';
 import 'package:realtime_taiwan/tabs/saved.dart';
-import 'package:realtime_taiwan/tabs/settings.dart';
+import 'package:realtime_taiwan/tabs/settings/settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '台灣即時影像',
+      title: 'Realtime Taiwan',
       theme: ThemeData(
         colorScheme:
             ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 26, 205, 195)),
@@ -63,15 +63,18 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    print("starting...");
     initScreen();
   }
 
-  onLoading() async {
+  Future<void> onLoading() async {
+    print("initDatabase...");
     await initDatabase();
+    print("fetching database data...");
     if (cctvList.isEmpty) {
       final xmlString = await getOpendataCCTV(context);
       // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
-      cctvList.loadXML(xmlString);
+      await cctvList.loadXML(xmlString);
       print("length of db: ${cctvList.length}");
     }
     print("done");
@@ -92,7 +95,7 @@ class _HomePageState extends State<HomePage> {
         },
         pageBuilder: (context, animation1, animation2) {
           return LoadingPage(
-            onLoading: () async => await onLoading(),
+            onLoading: onLoading,
           );
         },
       ));

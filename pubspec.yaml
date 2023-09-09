@@ -15,8 +15,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_map: ^5.0.0
   html: ^0.15.4
-  webview_flutter: ^4.2.4
   sqlite3: ^2.1.0
+  path_provider: ^2.1.1
+  url_launcher: ^6.1.14
+  sqlite3_flutter_libs: ^0.5.16
 
 dev_dependencies:
   flutter_test:

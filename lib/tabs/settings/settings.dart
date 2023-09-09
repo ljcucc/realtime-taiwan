@@ -1,47 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:realtime_taiwan/tabs/settings/map_selector_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum MapTileOptions {
-  OpenStreetMap,
-  GoogleMap,
-}
+class ResetAllDialog extends StatelessWidget {
+  const ResetAllDialog({super.key});
 
-class MapSelectorDialog extends StatefulWidget {
-  const MapSelectorDialog({super.key});
-
-  @override
-  State<MapSelectorDialog> createState() => _MapSelectorDialogState();
-}
-
-class _MapSelectorDialogState extends State<MapSelectorDialog> {
-  MapTileOptions groupValue = MapTileOptions.GoogleMap;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("選擇地圖"),
       scrollable: true,
+      title: Text("重置"),
       content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RadioListTile(
-            title: Text("Google Maps"),
-            value: MapTileOptions.GoogleMap,
-            groupValue: groupValue,
-            onChanged: (value) {
-              setState(() {
-                groupValue = value!;
-              });
-            },
+          Text("在重置應用程式的過程，以下資料都會被清除"),
+          SizedBox(
+            height: 8,
           ),
-          RadioListTile(
-            title: Text("Open Street Map"),
-            value: MapTileOptions.OpenStreetMap,
-            groupValue: groupValue,
-            onChanged: (value) {
-              setState(() {
-                groupValue = value!;
-              });
-            },
+          Divider(),
+          ListTile(
+            title: Text("書籤資料"),
+            subtitle: Text("所有你已儲存的地點，記得在重置之前匯出。"),
+            // leading: Icon(Icons.bookmark),
           ),
+          ListTile(
+            title: Text("快取資料"),
+            subtitle: Text("所有你已下載的快取資料都將會被清除，如果應用程式沒有正常運作可以試試看。"),
+            // leading: Icon(Icons.storage),
+          ),
+          Divider(),
         ],
       ),
       actions: [
@@ -55,7 +43,7 @@ class _MapSelectorDialogState extends State<MapSelectorDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text("選擇"),
+          child: Text("確定"),
         ),
       ],
     );
@@ -181,7 +169,11 @@ class SettingsPage extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) {
-                              return LicensePage();
+                              return LicensePage(
+                                applicationVersion: "1.0.0",
+                                applicationLegalese:
+                                    "Made with love from the_ITWolf",
+                              );
                             },
                           ));
                         },
@@ -195,6 +187,12 @@ class SettingsPage extends StatelessWidget {
                         title: "重置",
                         subtitle: "萬一程式運作不正常、更新資料",
                         icon: Icon(Icons.dangerous_outlined),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ResetAllDialog(),
+                          );
+                        },
                       ),
                     ],
                   ),

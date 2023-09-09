@@ -161,10 +161,14 @@ class CCTVList {
   }
 
   /// load XMLString, parse it and dump into database
-  loadXML(String xmlString) {
+  loadXML(String xmlString) async {
+    print("parsing");
     final parser = CCTVListParser(xmlString);
+    print("inserting...");
     final insertRow = db.prepare(appendSchema);
+    int items = 0;
     for (var element in parser.list) {
+      print("${++items}");
       insertRow.execute([
         element['cctvid'],
         element['linkid'],
@@ -180,6 +184,7 @@ class CCTVList {
         element['roaddirection'],
         element['locationmile'],
       ]);
+      await Future.delayed(Duration(milliseconds: 10));
     }
     insertRow.dispose();
   }
