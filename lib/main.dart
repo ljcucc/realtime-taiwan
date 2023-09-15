@@ -74,17 +74,18 @@ class _HomePageState extends State<HomePage> {
     initScreen();
   }
 
-  Future<void> onLoading() async {
+  Stream<String?> onLoading() async* {
     print("initDatabase...");
     await initDatabase();
-    print("fetching database data...");
+    yield "載入資料庫內容";
     if (cctvList.isEmpty) {
       final xmlString = await getOpendataCCTV(context);
       // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
-      await cctvList.loadXML(xmlString);
-      print("length of db: ${cctvList.length}");
+      await for (final index in cctvList.loadXML(xmlString)) {
+        yield "載入第 ${index.toString()} 筆資料...";
+      }
     }
-    print("done");
+    yield "完成！";
   }
 
   void initScreen() {

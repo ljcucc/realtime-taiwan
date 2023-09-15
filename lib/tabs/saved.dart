@@ -31,6 +31,8 @@ class _SavedPageState extends State<SavedPage> {
         },
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         child: Dismissible(
+          resizeDuration: Duration(milliseconds: 500),
+          movementDuration: Duration(milliseconds: 500),
           direction: DismissDirection.endToStart,
           background: Container(
             padding: const EdgeInsets.all(16),

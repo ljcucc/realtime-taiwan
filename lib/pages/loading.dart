@@ -5,7 +5,7 @@ import 'package:realtime_taiwan/data/database.dart';
 
 class LoadingPage extends StatefulWidget {
   /// will call this aysnc function while loading screen
-  final Future<void> Function() onLoading;
+  final Stream<String?> Function() onLoading;
 
   const LoadingPage({
     super.key,
@@ -17,6 +17,7 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
+  String msg = "";
   @override
   void initState() {
     super.initState();
@@ -24,7 +25,11 @@ class _LoadingPageState extends State<LoadingPage> {
   }
 
   _loading() async {
-    await widget.onLoading();
+    await for (final msg in widget.onLoading()) {
+      setState(() {
+        this.msg = msg!;
+      });
+    }
     Navigator.of(context).pop();
   }
 
@@ -61,12 +66,21 @@ class _LoadingPageState extends State<LoadingPage> {
           children: [
             helpWidget,
             Center(
-              child: Container(
-                alignment: Alignment.center,
-                constraints: BoxConstraints(maxWidth: 250),
-                child: LinearProgressIndicator(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    constraints: BoxConstraints(maxWidth: 250),
+                    child: LinearProgressIndicator(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Text(msg),
+                  ),
+                ],
               ),
             ),
           ],

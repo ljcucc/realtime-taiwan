@@ -14,7 +14,10 @@ import 'package:latlong2/latlong.dart';
 class CCTVListParser {
   List<Map<String, String>> list = [];
 
-  CCTVListParser(xmlString) {
+  CCTVListParser(
+    xmlString, {
+    Function? onParse,
+  }) {
     final List<dom.Element> cctvsHTML = html_parser
         .parse(xmlString) // (root)
         .children[0] // html
@@ -166,14 +169,15 @@ class CCTVList {
   }
 
   /// load XMLString, parse it and dump into database
-  loadXML(String xmlString) async {
+  Stream<int> loadXML(String xmlString) async* {
     print("parsing");
     final parser = CCTVListParser(xmlString);
     print("inserting...");
     final insertRow = db.prepare(appendSchema);
     int items = 0;
     for (var element in parser.list) {
-      print("${++items}");
+      // print("${++items}");
+      yield ++items;
       insertRow.execute([
         element['cctvid'],
         element['linkid'],
