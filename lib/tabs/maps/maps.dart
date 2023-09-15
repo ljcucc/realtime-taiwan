@@ -5,69 +5,18 @@ import 'dart:math';
 // maps packages
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:location/location.dart';
 
 // in-app packages
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/location.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
+import 'package:realtime_taiwan/tabs/maps/maps_display.dart';
+import 'package:realtime_taiwan/tabs/maps/point_marker.dart';
 import 'package:realtime_taiwan/tabs/maps/streaming.dart';
 
 import "package:provider/provider.dart";
-
-class PointMarker extends StatefulWidget {
-  final double zoomLevel;
-  final VoidCallback onTap;
-  const PointMarker({
-    super.key,
-    required this.zoomLevel,
-    required this.onTap,
-  });
-
-  @override
-  State<PointMarker> createState() => _PointMarkerState();
-}
-
-class _PointMarkerState extends State<PointMarker> {
-  bool onHover = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (event) => setState(() {
-        onHover = true;
-      }),
-      onExit: (event) => setState(() {
-        onHover = false;
-      }),
-      onHover: (event) => setState(() {
-        onHover = true;
-      }),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedScale(
-          scale: onHover ? 1.1 : 1.0,
-          duration: const Duration(milliseconds: 100),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(100)),
-                boxShadow: [
-                  // BoxShadow(
-                  //   color: Colors.black.withOpacity(.35),
-                  //   blurRadius: onHover ? 5 : 0,
-                  //   spreadRadius: 0,
-                  // )
-                ],
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: widget.zoomLevel * 0.4,
-                ),
-                color: Theme.of(context).colorScheme.onPrimary),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -78,86 +27,27 @@ class MapsPage extends StatefulWidget {
 
 class _MapsPageState extends State<MapsPage> {
   List<CCTVItem>? list;
-  double curZoom = 10;
+
+  final LocationModel _locationModel = LocationModel();
+
   @override
   void initState() {
     super.initState();
 
-    loadXML();
-  }
-
-  loadXML() async {
+    // load XML
     setState(() {
       list = cctvList.all;
-      print("hello");
-      print(list!.length);
     });
-  }
-
-  setCurZoom(double zoom) async {
-    await Future.delayed(Duration(milliseconds: 100));
-    setState(() {
-      curZoom = zoom;
-    });
-  }
-
-  generateMarks(context) {
-    final result = (list ?? [])
-        .map((e) {
-          if (curZoom < 9) {
-            return null;
-          }
-
-          // if (curZoom < 15) {
-          return Marker(
-            point: e.loc,
-            width: (pow(curZoom, 1.35) as double),
-            height: (pow(curZoom, 1.35) as double),
-            builder: (context) => PointMarker(
-              zoomLevel: curZoom,
-              onTap: () {
-                openStream(item: e, context: context);
-              },
-            ),
-          );
-          // }
-        })
-        .toList()
-        .where((e) => e != null);
-    return result;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlutterMap(
-      options: MapOptions(
-        center: LatLng(23.5, 120.9738819),
-        zoom: 10,
-        maxZoom: 18,
-        onMapEvent: (p0) {
-          setCurZoom(p0.zoom);
-        },
-      ),
-      children: [
-        ColorFiltered(
-          colorFilter: ColorFilter.mode(
-            Theme.of(context).colorScheme.onPrimaryContainer,
-            BlendMode.hue,
-          ),
-          child: Consumer<MapSourceModel>(builder: (context, model, child) {
-            return TileLayer(
-              urlTemplate: model.source ??
-                  'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
-              userAgentPackageName: 'com.example.app',
-            );
-          }),
-        ),
-        MarkerLayer(
-          markers: [
-            ...generateMarks(context),
-          ],
-        ),
-      ],
+    return MapDisplayWidget(
+      locationModel: _locationModel,
+      items: list ?? [],
+      onTap: (e) {
+        openStream(item: e, context: context);
+      },
     );
   }
 }
