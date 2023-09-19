@@ -6,6 +6,7 @@ import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/pages/loading.dart';
 
 import 'package:realtime_taiwan/tabs/maps/maps.dart';
+import 'package:realtime_taiwan/tabs/maps/maps_display.dart';
 import 'package:realtime_taiwan/tabs/saved.dart';
 import 'package:realtime_taiwan/tabs/settings/settings.dart';
 
@@ -65,6 +66,7 @@ class _HomePageState extends State<HomePage> {
 
   int currentPageIndex = 0;
   bool loading = true;
+  final MapDisplayController _mapDisplayController = MapDisplayController();
 
   @override
   void initState() {
@@ -144,7 +146,9 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return FloatingActionButton(
           child: Icon(Icons.my_location),
-          onPressed: () {},
+          onPressed: () {
+            _mapDisplayController.notifyListeners();
+          },
         );
     }
     return null;
@@ -189,20 +193,23 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
-    return Scaffold(
-      body: loading
-          ? Container()
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                !isPhone(context) ? navigationRail : Container(),
-                Expanded(
-                  child: switchPage(currentPageIndex),
-                )
-              ],
-            ),
-      bottomNavigationBar: isPhone(context) ? buttomNavigationBar : null,
-      floatingActionButton: switchFAB(currentPageIndex),
+    return ChangeNotifierProvider.value(
+      value: _mapDisplayController,
+      child: Scaffold(
+        body: loading
+            ? Container()
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  !isPhone(context) ? navigationRail : Container(),
+                  Expanded(
+                    child: switchPage(currentPageIndex),
+                  )
+                ],
+              ),
+        bottomNavigationBar: isPhone(context) ? buttomNavigationBar : null,
+        floatingActionButton: switchFAB(currentPageIndex),
+      ),
     );
   }
 }

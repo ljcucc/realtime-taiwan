@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
 
+const defaultLoc = LatLng(23.5, 120.9738819);
+
 class LocationModel extends ChangeNotifier {
   Location location = Location();
 

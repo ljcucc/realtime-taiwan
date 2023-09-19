@@ -13,7 +13,6 @@ import 'package:realtime_taiwan/data/database.dart';
 import 'package:realtime_taiwan/data/location.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/tabs/maps/maps_display.dart';
-import 'package:realtime_taiwan/tabs/maps/point_marker.dart';
 import 'package:realtime_taiwan/tabs/maps/streaming.dart';
 
 import "package:provider/provider.dart";

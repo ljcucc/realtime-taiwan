@@ -19,6 +19,10 @@ dependencies:
   path_provider: ^2.1.1
   url_launcher: ^6.1.14
   sqlite3_flutter_libs: ^0.5.16
+  provider: ^6.0.5
+  location: ^5.0.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

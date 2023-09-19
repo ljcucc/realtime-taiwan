@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/pages/about.dart';
 import 'package:realtime_taiwan/tabs/settings/list_section.dart';
-import 'package:realtime_taiwan/tabs/settings/map_selector_dialog.dart';
+import 'package:realtime_taiwan/pages/map_selector.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ResetAllDialog extends StatelessWidget {
@@ -83,12 +83,7 @@ class SettingsPage extends StatelessWidget {
                           subtitle: name,
                           icon: Icon(Icons.map),
                           onTap: () {
-                            showDialog<String>(
-                              context: context,
-                              builder: (context) {
-                                return MapSelectorDialog();
-                              },
-                            );
+                            MapSelectorPage.open(context);
                           },
                         );
                       }),
