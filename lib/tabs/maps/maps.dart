@@ -17,6 +17,7 @@ import 'package:realtime_taiwan/tabs/maps/point_marker.dart';
 import 'package:realtime_taiwan/tabs/maps/streaming.dart';
 
 import "package:provider/provider.dart";
+import 'package:url_launcher/url_launcher_string.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -42,12 +43,29 @@ class _MapsPageState extends State<MapsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MapDisplayWidget(
-      locationModel: _locationModel,
-      items: list ?? [],
-      onTap: (e) {
-        openStream(item: e, context: context);
-      },
+    return Stack(
+      children: [
+        MapDisplayWidget(
+          locationModel: _locationModel,
+          items: list ?? [],
+          onTap: (e) {
+            openStream(item: e, context: context);
+          },
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          child: TextButton(
+            onPressed: () async {
+              await launchUrlString("https://realtime-taiwan.ljcu.cc/#/data");
+            },
+            child: const Text(
+              "Map data",
+              style: TextStyle(decoration: TextDecoration.underline),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

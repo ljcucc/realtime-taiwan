@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
 
-// TODO: fix enum type and string type issue
+const MapTileOptions = [
+  MapTileOption(
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    name: "OpenStreetMap",
+  ),
+  MapTileOption(
+    url: "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+    name: "Google Maps",
+  ),
+];
+
+class MapTileOption {
+  final String url;
+  final String name;
+
+  const MapTileOption({
+    required this.url,
+    required this.name,
+  });
+}
+
 class MapSourceModel extends ChangeNotifier {
-  String? source;
+  MapTileOption? type;
 
-  void fetchPreference() {}
-
-  void setSource(String url) {
-    source = url;
+  void setType(MapTileOption type) {
+    this.type = type;
     notifyListeners();
   }
 }

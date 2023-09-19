@@ -89,9 +89,12 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
             BlendMode.hue,
           ),
           child: Consumer<MapSourceModel>(builder: (context, model, child) {
+            var url = MapTileOptions[0].url;
+            if (model.type != null) {
+              url = model.type!.url;
+            }
             return TileLayer(
-              urlTemplate: model.source ??
-                  'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+              urlTemplate: url,
               userAgentPackageName: 'com.example.app',
             );
           }),
