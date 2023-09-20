@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ListSectionWidget extends StatelessWidget {
-  final String title;
-  final String? subtitle;
+  final Widget title;
+  final Widget? subtitle;
   final Icon icon;
   final Widget? trailing;
   final Color? color, textColor;
@@ -39,10 +39,8 @@ class ListSectionWidget extends StatelessWidget {
               padding: const EdgeInsets.only(right: 8.0),
               child: icon,
             ),
-            title: Text(
-              title,
-            ),
-            subtitle: subtitle != null ? Text(subtitle!) : null,
+            title: title,
+            subtitle: subtitle,
             trailing: trailing,
           ),
         ),

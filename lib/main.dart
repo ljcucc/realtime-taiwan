@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/layout.dart';
 import 'package:realtime_taiwan/pages/loading.dart';
@@ -10,6 +11,8 @@ import 'package:realtime_taiwan/tabs/maps/maps.dart';
 import 'package:realtime_taiwan/tabs/maps/maps_display.dart';
 import 'package:realtime_taiwan/tabs/saved.dart';
 import 'package:realtime_taiwan/tabs/settings/settings.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +30,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Realtime Taiwan',
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
           colorScheme:
               ColorScheme.fromSeed(seedColor: Color.fromARGB(0, 26, 205, 195)),
@@ -62,15 +67,15 @@ class _HomePageState extends State<HomePage> {
   Stream<String?> onLoading() async* {
     print("initDatabase...");
     await initDatabase();
-    yield "載入資料庫內容";
+    yield lang(context).loading_db;
     if (cctvList.isEmpty) {
       final xmlString = await getOpendataCCTV(context);
       // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
       await for (final index in cctvList.loadXML(xmlString)) {
-        yield "載入第 ${index.toString()} 筆資料...";
+        yield lang(context).loading_db_num(index);
       }
     }
-    yield "完成！";
+    yield lang(context).loading_done;
   }
 
   void initScreen() {
@@ -105,7 +110,7 @@ class _HomePageState extends State<HomePage> {
         BasicNavigation(
           selectedIcon: Icon(Icons.map),
           icon: Icon(Icons.map_outlined),
-          label: "地圖",
+          label: lang(context).tab_map,
           body: MapsPage(),
           fab: FloatingActionButton(
             child: Icon(Icons.my_location),
@@ -117,13 +122,13 @@ class _HomePageState extends State<HomePage> {
         BasicNavigation(
           selectedIcon: Icon(Icons.bookmark),
           icon: Icon(Icons.bookmark_outline),
-          label: "儲存",
+          label: lang(context).tab_saved,
           body: SavedPage(),
         ),
         BasicNavigation(
           selectedIcon: Icon(Icons.settings),
           icon: Icon(Icons.settings_outlined),
-          label: "設定",
+          label: lang(context).tab_settings,
           body: SettingsPage(),
         )
       ],

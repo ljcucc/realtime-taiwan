@@ -1,0 +1,31 @@
+{
+  "map_data": "Map data",
+  "tab_map": "Maps",
+  "tab_saved": "Saved",
+  "tab_settings": "Settings",
+  "loading_db": "Loading database content...",
+  "loading_db_num": "Loading number {num}th data...",
+  "@loading_db_num": {
+    "placeholders": {
+      "num": {
+        "type": "num"
+      }
+    }
+  },
+  "loading_done": "Done !",
+  "streaming_back": "Back",
+  "streaming_save": "Save",
+  "streaming_saved_msg": "Place saved!",
+  "settings_map": "Map",
+  "settings_about": "About",
+  "settings_about_subtitle": "About this application",
+  "settings_sourcecode": "Source Code",
+  "settings_sourcecode_subtitle": "The repository on github",
+  "saved_none":"Oh-no! You don't have any saved places yet, try add some from the map.",
+  "about_title": "About",
+  "about_apphomepage": "App home page",
+  "about_dataattr": "Data Attribution",
+  "about_license": "License",
+  "mapselector_title": "Map Source",
+  "mapselector_osm_subtitle": "This option will use offical tile server, aware of the large usage."
+}

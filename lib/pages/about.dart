@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 import 'package:realtime_taiwan/tabs/settings/list_section.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,7 +11,7 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("關於"),
+        title: Text(lang(context).about_title),
       ),
       body: SafeArea(
         child: ListView(
@@ -18,14 +19,14 @@ class AboutPage extends StatelessWidget {
           children: [
             ListSectionWidget(
                 icon: Icon(Icons.language),
-                title: "App 首頁",
+                title: Text(lang(context).about_apphomepage),
                 trailing: Icon(Icons.open_in_new),
                 onTap: () async {
                   await launchUrl(Uri.parse("https://realtime-taiwan.ljcu.cc"));
                 }),
             ListSectionWidget(
                 icon: Icon(Icons.language),
-                title: "資料集歸依宣告",
+                title: Text(lang(context).about_dataattr),
                 trailing: Icon(Icons.open_in_new),
                 onTap: () async {
                   await launchUrl(
@@ -33,7 +34,7 @@ class AboutPage extends StatelessWidget {
                 }),
             ListSectionWidget(
               icon: Icon(Icons.file_open),
-              title: "軟體依賴授權宣告",
+              title: Text(lang(context).about_license),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(

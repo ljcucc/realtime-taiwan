@@ -10,6 +10,7 @@ import 'package:location/location.dart';
 // in-app packages
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 import 'package:realtime_taiwan/data/location.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/tabs/maps/maps_display.dart';
@@ -58,8 +59,8 @@ class _MapsPageState extends State<MapsPage> {
             onPressed: () async {
               await launchUrlString("https://realtime-taiwan.ljcu.cc/#/data");
             },
-            child: const Text(
-              "Map data",
+            child: Text(
+              lang(context).map_data,
               style: TextStyle(decoration: TextDecoration.underline),
             ),
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:realtime_taiwan/data/bookmark.dart';
 import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 import 'package:realtime_taiwan/tabs/maps/streaming.dart';
 
 class SavedPage extends StatefulWidget {
@@ -72,9 +73,9 @@ class _SavedPageState extends State<SavedPage> {
     final noSavedList = Expanded(
       child: Container(
         padding: const EdgeInsets.all(32),
-        child: const Center(
+        child: Center(
           child: Text(
-            "奧喔！這裡沒有任何儲存的地點呢，到地圖中蒐藏地點吧。",
+            lang(context).saved_none,
             textAlign: TextAlign.center,
           ),
         ),
@@ -87,7 +88,7 @@ class _SavedPageState extends State<SavedPage> {
         child: Column(
           children: [
             Text(
-              "儲存",
+              lang(context).tab_saved,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(

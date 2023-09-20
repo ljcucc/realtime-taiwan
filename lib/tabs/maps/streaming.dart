@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:realtime_taiwan/data/bookmark.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 
 void PlatformVideoWidget() {
   if (true) {}
@@ -182,7 +183,7 @@ class StreamingPageBottomSheet extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 16),
                               child: IconButton.filledTonal(
                                 icon: Icon(Icons.close),
-                                tooltip: "返回",
+                                tooltip: lang(context).streaming_back,
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -239,7 +240,7 @@ class _BookmarkButtonState extends State<BookmarkButton> {
     if (saved) {
       widget.bookmark.add();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("地點已儲存")),
+        SnackBar(content: Text(lang(context).streaming_saved_msg)),
       );
     } else {
       widget.bookmark.remove();
@@ -256,7 +257,7 @@ class _BookmarkButtonState extends State<BookmarkButton> {
       isSelected: saved,
       selectedIcon: Icon(Icons.bookmark),
       icon: Icon(Icons.bookmark_border),
-      tooltip: "儲存",
+      tooltip: lang(context).streaming_save,
     );
   }
 }

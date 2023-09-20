@@ -23,6 +23,7 @@ dependencies:
   location: ^5.0.0
   flutter_localizations:
     sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -31,8 +32,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
   uses-material-design: true
+  generate: true
 
   assets:
     - assets/opendataCCTVs.xml

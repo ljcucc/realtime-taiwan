@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:provider/provider.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 import 'package:realtime_taiwan/data/location.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:latlong2/latlong.dart';
@@ -44,7 +45,7 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("選擇地圖"),
+        title: Text(lang(context).mapselector_title),
       ),
       body: SafeArea(
         child: Column(
@@ -87,8 +88,8 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
                       return element.customBuilder!;
 
                     return RadioListTile(
-                      title: Text(element.name),
-                      subtitle: element.subtitle,
+                      title: element.name,
+                      subtitle: element.description,
                       value: element,
                       groupValue: groupValue,
                       onChanged: (value) {

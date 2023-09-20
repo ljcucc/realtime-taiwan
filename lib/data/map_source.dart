@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 
-const MapTileOptions = [
+var MapTileOptions = [
   MapTileOption(
     url: "https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
-    name: "Google Maps",
+    name: Text("Google Maps"),
   ),
   MapTileOption(
     url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    name: "OpenStreetMap",
-    description:
-        "This option will use offical tile server, aware of the large usage.",
+    name: Text("OpenStreetMap"),
+    description: Builder(builder: (context) {
+      return Text(lang(context).mapselector_osm_subtitle);
+    }),
   ),
 ];
 
 class MapTileOption {
   final String url;
-  final String name;
-  final String? description;
+  final Widget name;
+  final Widget? description;
   final Builder? customBuilder;
 
   const MapTileOption({
@@ -25,8 +27,6 @@ class MapTileOption {
     this.description,
     this.customBuilder,
   });
-
-  get subtitle => description != null ? Text(description!) : null;
 }
 
 class CustomMapTileOption {}

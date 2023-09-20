@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/pages/about.dart';
 import 'package:realtime_taiwan/tabs/settings/list_section.dart';
@@ -67,7 +68,8 @@ class SettingsPage extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                Text("設定", style: Theme.of(context).textTheme.titleLarge),
+                Text(lang(context).tab_settings,
+                    style: Theme.of(context).textTheme.titleLarge),
                 SizedBox(height: 32),
                 Container(
                   // padding: const EdgeInsets.all(16),
@@ -79,7 +81,7 @@ class SettingsPage extends StatelessWidget {
                         var name = MapTileOptions[0].name;
                         if (model.type != null) name = model.type!.name;
                         return ListSectionWidget(
-                          title: "地圖",
+                          title: Text(lang(context).settings_map),
                           subtitle: name,
                           icon: Icon(Icons.map),
                           onTap: () {
@@ -88,8 +90,8 @@ class SettingsPage extends StatelessWidget {
                         );
                       }),
                       ListSectionWidget(
-                        title: "關於",
-                        subtitle: "關於這個應用程式",
+                        title: Text(lang(context).settings_about),
+                        subtitle: Text(lang(context).settings_about_subtitle),
                         icon: Icon(Icons.info_outline),
                         onTap: () {
                           Navigator.of(context).push(
@@ -100,8 +102,9 @@ class SettingsPage extends StatelessWidget {
                         },
                       ),
                       ListSectionWidget(
-                        title: "原始碼",
-                        subtitle: "這個應用程式在 Github 的原始程式碼",
+                        title: Text(lang(context).settings_sourcecode),
+                        subtitle:
+                            Text(lang(context).settings_sourcecode_subtitle),
                         icon: Icon(Icons.language),
                         trailing: Icon(Icons.open_in_new),
                         onTap: () async {
