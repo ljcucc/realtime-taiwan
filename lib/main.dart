@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
+import 'package:realtime_taiwan/layout.dart';
 import 'package:realtime_taiwan/pages/loading.dart';
 
 import 'package:realtime_taiwan/tabs/maps/maps.dart';
@@ -46,24 +47,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final actions = {
-    {
-      'selectedIcon': Icon(Icons.map),
-      'icon': Icon(Icons.map_outlined),
-      'label': '地圖'
-    },
-    {
-      'selectedIcon': Icon(Icons.bookmark),
-      'icon': Icon(Icons.bookmark_outline),
-      'label': '儲存',
-    },
-    {
-      'selectedIcon': Icon(Icons.settings),
-      'icon': Icon(Icons.settings_outlined),
-      'label': '設定',
-    }
-  };
-
   int currentPageIndex = 0;
   bool loading = true;
   final MapDisplayController _mapDisplayController = MapDisplayController();
@@ -115,101 +98,39 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  bool isPhone(context) {
-    final platform = Theme.of(context).platform;
-    final isDesktop = [
-      TargetPlatform.macOS,
-      TargetPlatform.linux,
-      TargetPlatform.windows
-    ].contains(platform);
-    final deviceWidth = MediaQuery.of(context).size.width;
-    final isPhone = (isDesktop && (deviceWidth < 800)) ||
-        (!isDesktop && (deviceWidth < 1000));
-    return isPhone;
-  }
-
-  Widget switchPage(index) {
-    switch (index) {
-      case 0:
-        return MapsPage();
-      case 1:
-        return SavedPage();
-      case 2:
-        return SettingsPage();
-    }
-
-    return Container();
-  }
-
-  Widget? switchFAB(int index) {
-    switch (index) {
-      case 0:
-        return FloatingActionButton(
-          child: Icon(Icons.my_location),
-          onPressed: () {
-            _mapDisplayController.notifyListeners();
-          },
-        );
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final navigationRail = NavigationRail(
-      groupAlignment: 0,
-      destinations: [
-        ...actions.map((e) {
-          return NavigationRailDestination(
-            icon: e['icon'] as Icon,
-            label: Text(e['label'] as String),
-            selectedIcon: e['selectedIcon'] as Icon,
-          );
-        }).toList(),
-      ],
-      labelType: NavigationRailLabelType.all,
-      selectedIndex: currentPageIndex,
-      onDestinationSelected: (index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-      },
-    );
-    final buttomNavigationBar = NavigationBar(
-      onDestinationSelected: (int index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-      },
-      selectedIndex: currentPageIndex,
-      destinations: <Widget>[
-        ...actions.map((e) {
-          return NavigationDestination(
-            icon: e['icon'] as Icon,
-            label: e['label'] as String,
-            selectedIcon: e['selectedIcon'] as Icon,
-          );
-        }).toList(),
+    final layout = BasicLayout(
+      navigations: [
+        BasicNavigation(
+          selectedIcon: Icon(Icons.map),
+          icon: Icon(Icons.map_outlined),
+          label: "地圖",
+          body: MapsPage(),
+          fab: FloatingActionButton(
+            child: Icon(Icons.my_location),
+            onPressed: () {
+              _mapDisplayController.notifyListeners();
+            },
+          ),
+        ),
+        BasicNavigation(
+          selectedIcon: Icon(Icons.bookmark),
+          icon: Icon(Icons.bookmark_outline),
+          label: "儲存",
+          body: SavedPage(),
+        ),
+        BasicNavigation(
+          selectedIcon: Icon(Icons.settings),
+          icon: Icon(Icons.settings_outlined),
+          label: "設定",
+          body: SettingsPage(),
+        )
       ],
     );
-
     return ChangeNotifierProvider.value(
       value: _mapDisplayController,
-      child: Scaffold(
-        body: loading
-            ? Container()
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  !isPhone(context) ? navigationRail : Container(),
-                  Expanded(
-                    child: switchPage(currentPageIndex),
-                  )
-                ],
-              ),
-        bottomNavigationBar: isPhone(context) ? buttomNavigationBar : null,
-        floatingActionButton: switchFAB(currentPageIndex),
-      ),
+      child: loading ? Container() : layout,
     );
   }
 }
