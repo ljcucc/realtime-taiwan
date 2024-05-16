@@ -1,4 +1,4 @@
-package com.example.realtime_taiwan
+package app.ljcucc.realtime_taiwan
 
 import io.flutter.embedding.android.FlutterActivity
 
