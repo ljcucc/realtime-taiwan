@@ -1,8 +1,8 @@
-> This project is still in development.
-
 # Realtime Taiwan
 
 A realtime camera GIS browser written in flutter, powered by Open Data from Taiwanese Government.
+
+<a href='https://play.google.com/store/apps/details?id=app.ljcucc.realtime_taiwan&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=240/></a>
 
 ## Get Started
 
