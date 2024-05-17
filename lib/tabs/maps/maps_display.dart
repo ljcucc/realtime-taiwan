@@ -45,7 +45,7 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
   void initState() {
     super.initState();
 
-    widget.locationModel.initLocation();
+    // widget.locationModel.initLocation();
     // widget.locationModel.addListener(onLocationMoved);
     _mapDisplayController = context.read<MapDisplayController>();
     _mapDisplayController!.addListener(onLocationPosed);

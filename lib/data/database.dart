@@ -9,15 +9,28 @@ import 'package:path/path.dart' as path;
 
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
-late Database database;
+// late Database database;
 late CCTVList cctvList;
 late BookmarkList bookmarkList;
+String appPath = "";
 
 initDatabase() async {
-  final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
-  database = sqlite3.open(path.join(appDocumentsDir.path, "cctvs.sqlite3"));
+  Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+  appPath = appDocumentsDir.path;
+
+  final database = await openDatabase(appPath);
   cctvList = CCTVList(db: database);
   bookmarkList = BookmarkList(db: database);
+}
+
+Future<Database> openDatabase(String p) async {
+  print("opening db file from: ${p}");
+  return sqlite3.open(path.join(p, "cctvs.sqlite3"));
+}
+
+Future<CCTVList> getCctvList(String dbPath) async {
+  final database = await openDatabase(dbPath);
+  return CCTVList(db: database);
 }
 
 // final database = sqlite3.openInMemory();

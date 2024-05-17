@@ -29,8 +29,6 @@ class MapsPage extends StatefulWidget {
 class _MapsPageState extends State<MapsPage> {
   List<CCTVItem>? list;
 
-  final LocationModel _locationModel = LocationModel();
-
   @override
   void initState() {
     super.initState();
@@ -43,29 +41,31 @@ class _MapsPageState extends State<MapsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        MapDisplayWidget(
-          locationModel: _locationModel,
-          items: list ?? [],
-          onTap: (e) {
-            openStream(item: e, context: context);
-          },
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          child: TextButton(
-            onPressed: () async {
-              await launchUrlString("https://realtime-taiwan.ljcu.cc/#/data");
+    return Consumer<LocationModel>(builder: (context, locationModel, _) {
+      return Stack(
+        children: [
+          MapDisplayWidget(
+            locationModel: locationModel,
+            items: list ?? [],
+            onTap: (e) {
+              openStream(item: e, context: context);
             },
-            child: Text(
-              lang(context).map_data,
-              style: TextStyle(decoration: TextDecoration.underline),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: TextButton(
+              onPressed: () async {
+                await launchUrlString("https://realtime-taiwan.ljcu.cc/#/data");
+              },
+              child: Text(
+                lang(context).map_data,
+                style: TextStyle(decoration: TextDecoration.underline),
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }

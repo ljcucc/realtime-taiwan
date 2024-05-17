@@ -8,10 +8,15 @@ class LocationModel extends ChangeNotifier {
   Location location = Location();
 
   late bool _serviceEnabled;
-  late PermissionStatus _permissionGranted;
+  PermissionStatus? _permissionGranted;
   LatLng? _geo;
 
   LatLng get geo => _geo ?? LatLng(23.5, 120.9738819);
+
+  get permissionGranted =>
+      _permissionGranted != null &&
+      (_permissionGranted == PermissionStatus.granted ||
+          _permissionGranted == PermissionStatus.grantedLimited);
 
   initLocation() async {
     _serviceEnabled = await location.serviceEnabled();

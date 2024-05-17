@@ -1,16 +1,15 @@
 name: realtime_taiwan
 description: Realtime GIS browser for Taiwan.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
+  sdk: ">=3.1.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-
 
   cupertino_icons: ^1.0.2
   flutter_map: ^5.0.0
@@ -24,6 +23,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  google_generative_ai: ^0.2.2
 
 dev_dependencies:
   flutter_test:
@@ -35,10 +35,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/opendataCCTVs.xml
 
 flutter_launcher_icons:
   image_path: "assets/icons/ic_launcher.png"
   adaptive_icon_background: "assets/icons/background.png"
   adaptive_icon_foreground: "assets/icons/foreground.png"
   android: true
-

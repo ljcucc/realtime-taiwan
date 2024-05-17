@@ -10,6 +10,8 @@ import 'package:realtime_taiwan/data/database.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:flutter/services.dart' show rootBundle;
+
 /// XML to dictionary data parser for openData XML
 class CCTVListParser {
   List<Map<String, String>> list = [];
@@ -82,7 +84,7 @@ class CCTVItem {
   /// auto fetch rest of the infomation from database
   _fetchInfo() {
     final row = db.select(
-      """SELECT 
+      """SELECT
       locationtype,
       videostreamurl,
       videoimageurl,
@@ -128,19 +130,19 @@ class CCTVList {
   // TODO: fix this madness
 
   /// insert schema used to insert a complete row into sqlite database
-  final appendSchema = """INSERT INTO cctvs ( 
+  final appendSchema = """INSERT INTO cctvs (
       cctvid,
       linkid,
       videostreamurl,
-      videoimageurl, 
-      locationtype, 
-      positionlon, 
-      positionlat, 
-      surveillancedescription, 
-      roadid, 
-      roadname, 
-      roadclass, 
-      roaddirection, 
+      videoimageurl,
+      locationtype,
+      positionlon,
+      positionlat,
+      surveillancedescription,
+      roadid,
+      roadname,
+      roadclass,
+      roaddirection,
       locationmile
     )  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);""";
 
@@ -169,15 +171,14 @@ class CCTVList {
   }
 
   /// load XMLString, parse it and dump into database
-  Stream<int> loadXML(String xmlString) async* {
+  Future<void> loadXML(String xmlString) async {
     print("parsing");
     final parser = CCTVListParser(xmlString);
     print("inserting...");
     final insertRow = db.prepare(appendSchema);
     int items = 0;
     for (var element in parser.list) {
-      // print("${++items}");
-      yield ++items;
+      print("${++items}");
       insertRow.execute([
         element['cctvid'],
         element['linkid'],
@@ -193,7 +194,7 @@ class CCTVList {
         element['roaddirection'],
         element['locationmile'],
       ]);
-      await Future.delayed(Duration(milliseconds: 10));
+      // await Future.delayed(Duration(milliseconds: 10));
     }
     insertRow.dispose();
   }
@@ -224,10 +225,8 @@ class CCTVList {
 }
 
 /// get data based on https://data.gov.tw/en/datasets/29817
-Future<String> getOpendataCCTV(context) async {
-  print("fetching xml from web...");
-  final respone =
-      await http.get(Uri.parse('http://211.23.44.7/opendataCCTVs.xml'));
-  final xmlString = utf8.decode(respone.bodyBytes);
-  return xmlString;
+Future<String> getOpendataCCTV() async {
+  print("fetching xml from assets folder...");
+  final response = rootBundle.loadString("assets/opendataCCTVs.xml");
+  return response;
 }

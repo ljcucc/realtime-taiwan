@@ -1,8 +1,11 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:realtime_taiwan/data/database.dart';
 import 'package:realtime_taiwan/data/lang.dart';
+import 'package:realtime_taiwan/data/location.dart';
 import 'package:realtime_taiwan/data/map_source.dart';
 import 'package:realtime_taiwan/layout.dart';
 import 'package:realtime_taiwan/pages/loading.dart';
@@ -55,6 +58,7 @@ class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
   bool loading = true;
   final MapDisplayController _mapDisplayController = MapDisplayController();
+  final LocationModel locationModel = LocationModel();
 
   @override
   void initState() {
@@ -68,14 +72,23 @@ class _HomePageState extends State<HomePage> {
     print("initDatabase...");
     await initDatabase();
     yield lang(context).loading_db;
+    final databasePath = appPath;
+
     if (cctvList.isEmpty) {
-      final xmlString = await getOpendataCCTV(context);
-      // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
-      await for (final index in cctvList.loadXML(xmlString)) {
-        yield lang(context).loading_db_num(index);
-      }
+      final xmlString = await getOpendataCCTV();
+      await Isolate.run(() async {
+        print("folder: ${databasePath}");
+        final cctvl = await getCctvList(databasePath);
+        await cctvl.loadXML(xmlString);
+      });
     }
+    cctvList = await getCctvList(databasePath);
     yield lang(context).loading_done;
+  }
+
+  void setupDatabase() async {
+    // compute((xmlString) => cctvList.loadXML(xmlString), xmlString);
+    // yield lang(context).loading_db_num(index);
   }
 
   void initScreen() {
@@ -114,8 +127,33 @@ class _HomePageState extends State<HomePage> {
           body: MapsPage(),
           fab: FloatingActionButton(
             child: Icon(Icons.my_location),
-            onPressed: () {
-              _mapDisplayController.notifyListeners();
+            onPressed: () async {
+              if (locationModel.permissionGranted) return;
+
+              await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Location Access"),
+                  content: Text(
+                      "You're using a function that's need location access,which will display your current location on screen (map).to continue use this optional feature, please press Allow to continue. (currently because of flutter plugin, this feature only works with percise location)"),
+                  actions: [
+                    TextButton(
+                      child: const Text('Allow'),
+                      onPressed: () async {
+                        await locationModel.initLocation();
+                        _mapDisplayController.notifyListeners();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FilledButton(
+                      child: const Text("Reject"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              );
             },
           ),
         ),
@@ -133,8 +171,11 @@ class _HomePageState extends State<HomePage> {
         )
       ],
     );
-    return ChangeNotifierProvider.value(
-      value: _mapDisplayController,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: _mapDisplayController),
+        ChangeNotifierProvider.value(value: locationModel),
+      ],
       child: loading ? Container() : layout,
     );
   }
