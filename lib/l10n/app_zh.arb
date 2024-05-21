@@ -1,10 +1,10 @@
 {
   "map_data": "地圖資料",
   "tab_map": "地圖",
-  "tab_saved": "書籤",
+  "tab_saved": "已儲存",
   "tab_settings": "設定",
-  "loading_db": "載入資料庫中...",
-  "loading_db_num": "載入第 {num} 個資料...",
+  "loading_db": "載入地圖資料...",
+  "loading_db_num": "載入資料 {num}...",
   "@loading_db_num": {
     "placeholders": {
       "num": {
@@ -12,20 +12,23 @@
       }
     }
   },
-  "loading_done": "完成 !",
+  "loading_done": "地圖資料已載入",
   "streaming_back": "返回",
   "streaming_save": "儲存",
-  "streaming_saved_msg": "地點已儲存!",
+  "streaming_saved_msg": "已儲存地點",
   "settings_map": "地圖",
   "settings_about": "關於",
-  "settings_about_subtitle": "關於這個應用程式",
+  "settings_about_subtitle": "關於此應用程式",
   "settings_sourcecode": "原始碼",
-  "settings_sourcecode_subtitle": "這個應用程式在 Github 上的原始碼",
-  "saved_none":"奧不! 你還沒有儲存任何地點, 試試在地圖上儲存一個地點",
+  "settings_sourcecode_subtitle": "檢視應用程式的原始碼",
+  "saved_none": "您還沒有儲存任何地點。請在地圖上新增一些地點。",
   "about_title": "關於",
   "about_apphomepage": "應用程式首頁",
-  "about_dataattr": "資料歸依",
-  "about_license": "開源軟體授權",
+  "about_dataattr": "資料歸屬",
+  "about_license": "授權",
   "mapselector_title": "地圖來源",
-  "mapselector_osm_subtitle": "使用 OpenStreetMap 的地圖是不推薦的，因為這有可能違反官方的使用規範。"
+  "mapselector_osm_subtitle": "此選項使用官方磁磚伺服器。請注意，伺服器可能出現大量流量。",
+  "help": "說明",
+  "location_permission_title": "使用位置權限？",
+  "location_permission_description": "此功能需要存取您的位置，以便在地圖上顯示它。若要使用此功能，請點選允許。注意：由於 Flutter 插件的限制，此功能僅適用於精確位置。"
 }
