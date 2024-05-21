@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:realtime_taiwan/data/cctv.dart';
-import 'package:realtime_taiwan/data/database.dart';
+import 'package:realtime_taiwan/data/lang.dart';
 
 class LoadingPage extends StatefulWidget {
   /// will call this aysnc function while loading screen
@@ -53,7 +51,7 @@ class _LoadingPageState extends State<LoadingPage> {
         child: Center(
           child: TextButton.icon(
             icon: Icon(Icons.info_outline),
-            label: Text("幫助"),
+            label: Text(lang(context).help),
             onPressed: () {},
           ),
         ),
