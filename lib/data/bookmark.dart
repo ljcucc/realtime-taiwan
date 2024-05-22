@@ -1,5 +1,28 @@
+import 'package:flutter/material.dart';
 import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:sqlite3/sqlite3.dart';
+
+class BookmarkListModel extends ChangeNotifier {
+  BookmarkList bookmarkList;
+
+  BookmarkListModel({
+    required this.bookmarkList,
+  });
+
+  void removeBookmark(BookmarkItem item) {
+    item.remove();
+    notifyListeners();
+  }
+
+  void addBookmark(BookmarkItem item) {
+    item.add();
+    notifyListeners();
+  }
+
+  List<BookmarkItem> listBookmarks() {
+    return bookmarkList.all;
+  }
+}
 
 class BookmarkItem {
   Database db;
