@@ -33,7 +33,14 @@ class _BasicLayoutState extends State<BasicLayout> {
 
   navigationRail() {
     return NavigationRail(
-      groupAlignment: 0,
+      // groupAlignment: 0,
+      // leading: Container(
+      //   height: 60,
+      //   child: RotatedBox(
+      //     quarterTurns: 1,
+      //     child: Icon(Icons.map_outlined),
+      //   ),
+      // ),
       destinations: [
         ...widget.navigations.map((e) {
           return NavigationRailDestination(
@@ -75,27 +82,30 @@ class _BasicLayoutState extends State<BasicLayout> {
 
   bool isPhone(context) {
     final platform = Theme.of(context).platform;
-    final isDesktop = [
-      TargetPlatform.macOS,
-      TargetPlatform.linux,
-      TargetPlatform.windows
-    ].contains(platform);
+    // final isDesktop = [
+    //   TargetPlatform.macOS,
+    //   TargetPlatform.linux,
+    //   TargetPlatform.windows
+    // ].contains(platform);
     final deviceWidth = MediaQuery.of(context).size.width;
-    final isPhone = (isDesktop && (deviceWidth < 800)) ||
-        (!isDesktop && (deviceWidth < 1000));
+    final isPhone = deviceWidth < 600;
     return isPhone;
   }
 
   @override
   Widget build(BuildContext context) {
+    final navRail = !isPhone(context) ? navigationRail() : Container();
     return Scaffold(
       body: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          !isPhone(context) ? navigationRail() : Container(),
+          navRail,
           Expanded(
-            child: widget.navigations[currentPageIndex].body!,
-          )
+            child: IndexedStack(
+              index: currentPageIndex,
+              children: widget.navigations.map((e) => e.body).toList(),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: isPhone(context) ? buttomNavigationBar() : null,
