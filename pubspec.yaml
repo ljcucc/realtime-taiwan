@@ -24,6 +24,10 @@ dependencies:
     sdk: flutter
   intl: any
   google_generative_ai: ^0.2.2
+  dynamic_color: ^1.7.0
+  mime: ^1.0.5
+  gap: ^3.0.1
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:
@@ -42,4 +46,5 @@ flutter_launcher_icons:
   image_path: "assets/icons/ic_launcher.png"
   adaptive_icon_background: "assets/icons/background.png"
   adaptive_icon_foreground: "assets/icons/foreground.png"
+  adaptive_icon_monochrome: "assets/icons/ic_launcher.png"
   android: true
