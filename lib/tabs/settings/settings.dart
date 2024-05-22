@@ -60,62 +60,65 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settingsOptions = [
+      Consumer<MapSourceModel>(builder: (context, model, child) {
+        var name = MapTileOptions[0].name;
+        if (model.type != null) name = model.type!.name;
+        return ListSectionWidget(
+          title: Text(lang(context).settings_map),
+          subtitle: name,
+          icon: Icon(Icons.map),
+          onTap: () {
+            MapSelectorPage.open(context);
+          },
+        );
+      }),
+      ListSectionWidget(
+        title: Text(lang(context).settings_about),
+        subtitle: Text(lang(context).settings_about_subtitle),
+        icon: Icon(Icons.info_outline),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) {
+              return const AboutPage();
+            }),
+          );
+        },
+      ),
+      ListSectionWidget(
+        title: Text(lang(context).settings_sourcecode),
+        subtitle: Text(lang(context).settings_sourcecode_subtitle),
+        icon: Icon(Icons.language),
+        trailing: Icon(Icons.open_in_new),
+        onTap: () async {
+          await launchUrl(
+              Uri.parse("https://github.com/ljcucc/realtime-taiwan"));
+        },
+      ),
+    ];
+
     return SafeArea(
-      child: Container(
-        height: double.infinity,
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(lang(context).tab_settings,
-                    style: Theme.of(context).textTheme.titleLarge),
-                SizedBox(height: 32),
-                Container(
-                  // padding: const EdgeInsets.all(16),
-                  alignment: Alignment.topLeft,
-                  child: Column(
-                    children: [
-                      Consumer<MapSourceModel>(
-                          builder: (context, model, child) {
-                        var name = MapTileOptions[0].name;
-                        if (model.type != null) name = model.type!.name;
-                        return ListSectionWidget(
-                          title: Text(lang(context).settings_map),
-                          subtitle: name,
-                          icon: Icon(Icons.map),
-                          onTap: () {
-                            MapSelectorPage.open(context);
-                          },
-                        );
-                      }),
-                      ListSectionWidget(
-                        title: Text(lang(context).settings_about),
-                        subtitle: Text(lang(context).settings_about_subtitle),
-                        icon: Icon(Icons.info_outline),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) {
-                              return const AboutPage();
-                            }),
-                          );
-                        },
-                      ),
-                      ListSectionWidget(
-                        title: Text(lang(context).settings_sourcecode),
-                        subtitle:
-                            Text(lang(context).settings_sourcecode_subtitle),
-                        icon: Icon(Icons.language),
-                        trailing: Icon(Icons.open_in_new),
-                        onTap: () async {
-                          await launchUrl(Uri.parse(
-                              "https://github.com/ljcucc/realtime-taiwan"));
-                        },
-                      ),
-                    ],
+      child: Center(
+        child: Container(
+          height: double.infinity,
+          constraints: BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(lang(context).tab_settings,
+                      style: Theme.of(context).textTheme.titleLarge),
+                  SizedBox(height: 32),
+                  Container(
+                    // padding: const EdgeInsets.all(16),
+                    alignment: Alignment.topLeft,
+                    child: Column(
+                      children: settingsOptions,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
