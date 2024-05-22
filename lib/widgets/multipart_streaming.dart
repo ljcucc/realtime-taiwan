@@ -7,7 +7,9 @@ import 'package:realtime_taiwan/data/cctv.dart';
 import 'package:http/http.dart' as http;
 
 class MultipartStreamingController extends ChangeNotifier {
-  bool isStreaming = true;
+  bool isStreaming;
+
+  MultipartStreamingController({this.isStreaming = true});
 
   void resume() {
     isStreaming = true;
@@ -36,26 +38,28 @@ class MultipartStream extends StatefulWidget {
 
 class _StreamingPageState extends State<MultipartStream> {
   List<int> buffer = [];
+  http.Client? client;
 
   StreamSubscription<MimeMultipart>? streaming;
 
   // credit: https://stackoverflow.com/questions/72294203/how-to-parse-an-http-multipart-mixed-response-in-dart-flutter
   Future<void> loadStream() async {
+    client = http.Client();
+
     final url = widget.info.videoStreamUrl;
-    final client = http.Client();
     final rq = http.Request("GET", Uri.parse(url));
-    final sr = await client.send(rq);
+    final sr = await client!.send(rq);
 
     // Generate REGEX to get boundary from content-type header
     final boundaryget = RegExp('boundary=(.+)');
-    final contentType = sr.headers["content-type"].toString();
+    final contentType = sr!.headers["content-type"].toString();
 
     // Get the boundary
     final match = boundaryget.firstMatch(contentType);
     final boundary = match?.group(1) as String;
 
     final mm = MimeMultipartTransformer(boundary);
-    streaming = mm.bind(sr.stream).listen(
+    streaming = mm.bind(sr!.stream).listen(
       (res) async {
         // print("header: ${res.headers}");
         // print("length: ${res.headers["content-length"]}");
@@ -102,6 +106,7 @@ class _StreamingPageState extends State<MultipartStream> {
     } else {
       print("stream paused");
       streaming?.cancel();
+      client?.close();
     }
   }
 
@@ -131,8 +136,8 @@ class _StreamingPageState extends State<MultipartStream> {
 
           // image credit source tag
           Positioned(
-            bottom: 16,
-            right: 16,
+            bottom: 24,
+            right: 24,
             child: creditLabel,
           )
         ],
