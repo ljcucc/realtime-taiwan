@@ -12,7 +12,7 @@ import 'package:realtime_taiwan/pages/loading.dart';
 
 import 'package:realtime_taiwan/tabs/maps/maps.dart';
 import 'package:realtime_taiwan/tabs/maps/maps_display.dart';
-import 'package:realtime_taiwan/tabs/saved.dart';
+import 'package:realtime_taiwan/tabs/saved/saved.dart';
 import 'package:realtime_taiwan/tabs/settings/settings.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
