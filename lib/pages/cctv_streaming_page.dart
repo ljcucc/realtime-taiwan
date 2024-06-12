@@ -63,8 +63,7 @@ class _StreamingPageBottomSheetState extends State<CCTVStreamingPage> {
 
     final toolbar = Row(
       children: [
-        title,
-        const Spacer(),
+        Expanded(child: title),
         const Gap(24),
         BookmarkButton(bookmark: widget.item.bookmark),
         (!isPhone ? desktopCloseButton : Container()),
