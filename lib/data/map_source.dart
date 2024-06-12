@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:realtime_taiwan/data/lang.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var MapTileOptions = [
   MapTileOption(
@@ -32,10 +33,30 @@ class MapTileOption {
 class CustomMapTileOption {}
 
 class MapSourceModel extends ChangeNotifier {
-  MapTileOption type = MapTileOptions[0];
+  static const storeKey = "map-tile-index";
+  SharedPreferences? prefs;
+  int? index;
 
-  void setType(MapTileOption type) {
-    this.type = type;
+  Future<void> init() async {
+    if (prefs != null) return;
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  MapTileOption get type {
+    if (prefs == null) {
+      init();
+    }
+    index ??= prefs?.getInt('map-tile-index') ?? 0;
+    return MapTileOptions[index!];
+  }
+
+  void setType(MapTileOption t) async {
+    index = MapTileOptions.indexOf(t);
+    if (index! < 0) {
+      index = 0;
+    }
+
+    await prefs?.setInt('map-tile-index', index!);
     notifyListeners();
   }
 }

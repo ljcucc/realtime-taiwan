@@ -45,7 +45,11 @@ class MyApp extends StatelessWidget {
 
       return MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => MapSourceModel()),
+          ChangeNotifierProvider(create: (context) {
+            final model = MapSourceModel();
+            model.init();
+            return model;
+          }),
           ChangeNotifierProvider(
             create: (context) => BookmarkListModel(
               bookmarkList: bookmarkList,

@@ -1,7 +1,9 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:realtime_taiwan/data/location.dart'; // device geo location model
+import 'package:realtime_taiwan/tabs/maps/dynamic_map_tile.dart';
 import 'package:realtime_taiwan/tabs/maps/point_marker.dart'; // maps markers
 import 'package:realtime_taiwan/data/cctv.dart'; // database
 import 'package:provider/provider.dart';
@@ -149,22 +151,7 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
         onMapEvent: onMapEvent,
       ),
       children: [
-        ColorFiltered(
-          colorFilter: ColorFilter.mode(
-            Theme.of(context).colorScheme.onPrimaryContainer,
-            BlendMode.hue,
-          ),
-          child: Consumer<MapSourceModel>(builder: (context, model, child) {
-            var url = MapTileOptions[0].url;
-            if (model.type != null) {
-              url = model.type!.url;
-            }
-            return TileLayer(
-              urlTemplate: url,
-              userAgentPackageName: 'com.example.app',
-            );
-          }),
-        ),
+        const DynamicMapTile(),
         ListenableBuilder(
           listenable: widget.locationModel,
           builder: (context, child) {
@@ -176,7 +163,8 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
                     return Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(100)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
                         border: Border.all(
                           color: Theme.of(context).colorScheme.onPrimary,
                           width: 5,
