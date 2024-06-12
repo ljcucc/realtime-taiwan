@@ -148,13 +148,13 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           TextButton(
-            child: const Text("Reject"),
+            child: Text(lang(context).dailog_reject),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           FilledButton.tonal(
-            child: const Text('Allow'),
+            child: Text(lang(context).dailog_allow),
             onPressed: () async {
               await locationModel.initLocation();
               _mapDisplayController.notifyListeners();

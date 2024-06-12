@@ -30,5 +30,7 @@
   "mapselector_osm_subtitle": "此選項使用官方磁磚伺服器。請注意，伺服器可能出現大量流量。",
   "help": "說明",
   "location_permission_title": "使用位置權限？",
-  "location_permission_description": "此功能需要存取您的位置，以便在地圖上顯示它。若要使用此功能，請點選允許。注意：由於 Flutter 插件的限制，此功能僅適用於精確位置。"
+  "location_permission_description": "此功能需要存取您的位置，以便在地圖上顯示它。若要使用此功能，請點選允許。注意：由於 Flutter 插件的限制，此功能僅適用於精確位置。",
+  "dailog_reject": "拒絕",
+  "dailog_allow": "允許"
 }

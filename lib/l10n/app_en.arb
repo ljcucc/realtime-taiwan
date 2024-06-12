@@ -30,5 +30,7 @@
   "mapselector_osm_subtitle": "This option uses the official tile server. Note that the server may experience heavy traffic.",
   "help": "Help",
   "location_permission_title": "Use Location access?",
-  "location_permission_description": "This feature requires access to your location to display it on the map. To use this feature, tap Allow. Note: This feature only works with precise location due to limitations with the Flutter plugin."
+  "location_permission_description": "This feature requires access to your location to display it on the map. To use this feature, tap Allow. Note: This feature only works with precise location due to limitations with the Flutter plugin.",
+  "dailog_reject": "Reject",
+  "dailog_allow": "Allow"
 }
