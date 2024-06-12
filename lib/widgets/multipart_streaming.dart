@@ -48,7 +48,15 @@ class _StreamingPageState extends State<MultipartStream> {
 
     final url = widget.info.videoStreamUrl;
     final rq = http.Request("GET", Uri.parse(url));
-    final sr = await client!.send(rq);
+    late http.StreamedResponse sr;
+
+    try {
+      sr = await client!.send(rq);
+    } catch (e) {
+      await Future.delayed(const Duration(seconds: 5));
+      loadStream();
+      return;
+    }
 
     // Generate REGEX to get boundary from content-type header
     final boundaryget = RegExp('boundary=(.+)');
