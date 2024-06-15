@@ -82,7 +82,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
   bool loading = true;
-  final MapDisplayController _mapDisplayController = MapDisplayController();
   final LocationModel locationModel = LocationModel();
 
   @override
@@ -135,37 +134,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> askLocationPermission() async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(lang(context).location_permission_title),
-        content: Container(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Text(
-            lang(context).location_permission_description,
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: Text(lang(context).dailog_reject),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FilledButton.tonal(
-            child: Text(lang(context).dailog_allow),
-            onPressed: () async {
-              await locationModel.initLocation();
-              _mapDisplayController.notifyListeners();
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final navigations = [
@@ -175,13 +143,6 @@ class _HomePageState extends State<HomePage> {
         icon: const Icon(Icons.map_outlined),
         label: lang(context).tab_map,
         body: const MapsPage(),
-        fab: FloatingActionButton(
-          child: const Icon(Icons.my_location),
-          onPressed: () async {
-            if (locationModel.permissionGranted) return;
-            await askLocationPermission();
-          },
-        ),
       ),
 
       // bookmark tab
@@ -205,7 +166,6 @@ class _HomePageState extends State<HomePage> {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: _mapDisplayController),
         ChangeNotifierProvider.value(value: locationModel),
       ],
       child: loading ? Container() : layout,

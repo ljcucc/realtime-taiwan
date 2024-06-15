@@ -7,41 +7,30 @@ import 'package:realtime_taiwan/tabs/maps/dynamic_map_tile.dart';
 import 'package:realtime_taiwan/tabs/maps/point_marker.dart'; // maps markers
 import 'package:realtime_taiwan/data/cctv.dart'; // database
 import 'package:provider/provider.dart';
-import 'package:realtime_taiwan/data/map_source.dart'; // variable map tile provider
 import 'package:latlong2/latlong.dart';
-
-class MapDisplayController extends ChangeNotifier {
-  double zoom = 9;
-  LatLng? center;
-
-  pos(LatLng you) {
-    center = you;
-    notifyListeners();
-  }
-}
 
 class MapDisplayWidget extends StatefulWidget {
   final List<CCTVItem> items;
   final Function(CCTVItem) onTap;
   final LocationModel locationModel;
+  final MapController mapController;
 
   const MapDisplayWidget({
     super.key,
     required this.items,
     required this.onTap,
     required this.locationModel,
+    required this.mapController,
   });
 
   @override
   State<MapDisplayWidget> createState() => _MapDisplayWidgetState();
 }
 
-class _MapDisplayWidgetState extends State<MapDisplayWidget> {
+class _MapDisplayWidgetState extends State<MapDisplayWidget>
+    with TickerProviderStateMixin {
   double _zoom = 10;
   LatLng? _center;
-
-  final _mapController = MapController();
-  MapDisplayController? _mapDisplayController;
 
   @override
   void initState() {
@@ -49,26 +38,14 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
 
     // widget.locationModel.initLocation();
     // widget.locationModel.addListener(onLocationMoved);
-    _mapDisplayController = context.read<MapDisplayController>();
-    _mapDisplayController!.addListener(onLocationPosed);
   }
 
   onLocationPosed() {
-    _mapController.move(widget.locationModel.geo, _zoom);
-    _mapController.rotate(0);
+    widget.mapController.move(widget.locationModel.geo, _zoom);
+    widget.mapController.rotate(0);
   }
 
-  @override
-  dispose() {
-    super.dispose();
-
-    _mapDisplayController!.removeListener(onLocationPosed);
-  }
-
-  onLocationMoved() {
-    // if (centerLocked)
-    //   _mapController.move(_locationModel.geo, _mapController.zoom);
-  }
+  onLocationMoved() {}
 
   listToMarkers(list, context) {
     final List<LatLng> group = [];
@@ -142,8 +119,33 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceLocation = Consumer<LocationModel>(
+      builder: (context, locationModel, child) {
+        return MarkerLayer(
+          markers: [
+            Marker(
+              point: widget.locationModel.geo!,
+              builder: (BuildContext context) {
+                return Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(100)),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      width: 5,
+                    ),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+
     return FlutterMap(
-      mapController: _mapController,
+      mapController: widget.mapController,
       options: MapOptions(
         center: widget.locationModel.geo,
         zoom: 10,
@@ -152,32 +154,7 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget> {
       ),
       children: [
         const DynamicMapTile(),
-        ListenableBuilder(
-          listenable: widget.locationModel,
-          builder: (context, child) {
-            return MarkerLayer(
-              markers: [
-                Marker(
-                  point: widget.locationModel.geo!,
-                  builder: (BuildContext context) {
-                    return Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(100)),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          width: 5,
-                        ),
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+        deviceLocation,
         MarkerLayer(
           markers: [
             ...listToMarkers(widget.items, context),

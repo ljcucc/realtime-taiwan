@@ -29,6 +29,7 @@ dependencies:
   gap: ^3.0.1
   cached_network_image: ^3.3.1
   shared_preferences: ^2.2.3
+  flutter_map_animations: ^0.4.1
 
 dev_dependencies:
   flutter_test:
