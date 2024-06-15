@@ -36,6 +36,10 @@ class _SavedPageState extends State<SavedPage> {
                 shape: BoxShape.circle,
                 color: Theme.of(context).colorScheme.surfaceVariant,
               ),
+              child: Icon(
+                size: 42,
+                Icons.location_city,
+              ),
             ),
             const Gap(24),
             Text(
