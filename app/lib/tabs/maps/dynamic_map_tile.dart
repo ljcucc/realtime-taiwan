@@ -10,7 +10,7 @@ class DynamicMapTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColorFiltered(
       colorFilter: ColorFilter.mode(
-        Theme.of(context).colorScheme.surface,
+        Theme.of(context).colorScheme.primary,
         BlendMode.hue,
       ),
       child: ColorFiltered(
