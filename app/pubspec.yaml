@@ -2,7 +2,7 @@ name: realtime_taiwan
 description: Realtime GIS browser for Taiwan.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+4
+version: 1.0.2+5
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
