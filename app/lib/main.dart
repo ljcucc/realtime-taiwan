@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
 
       var colorScheme = ColorScheme.fromSeed(
         seedColor: const Color.fromARGB(0, 26, 205, 195),
+        brightness: platformBrightness,
       );
 
       if (platformBrightness == Brightness.dark) {
