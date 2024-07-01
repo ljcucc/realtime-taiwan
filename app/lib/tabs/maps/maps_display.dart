@@ -131,10 +131,10 @@ class _MapDisplayWidgetState extends State<MapDisplayWidget>
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(100)),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: Theme.of(context).colorScheme.onTertiary,
                       width: 5,
                     ),
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
                 );
               },

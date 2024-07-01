@@ -69,7 +69,10 @@ class _MapsPageState extends State<MapsPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<LocationModel>(builder: (context, locationModel, _) {
+      final colors = Theme.of(context).colorScheme;
       final fab = FloatingActionButton(
+        foregroundColor: colors.onTertiaryContainer,
+        backgroundColor: colors.tertiaryContainer,
         child: const Icon(Icons.my_location),
         onPressed: () async {
           if (!locationModel.permissionGranted) await askLocationPermission();
@@ -98,7 +101,6 @@ class _MapsPageState extends State<MapsPage> with TickerProviderStateMixin {
               },
               child: Text(
                 lang(context).map_data,
-                style: const TextStyle(decoration: TextDecoration.underline),
               ),
             ),
           ),
