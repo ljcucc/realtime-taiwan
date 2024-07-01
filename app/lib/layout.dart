@@ -61,22 +61,53 @@ class _BasicLayoutState extends State<BasicLayout> {
   }
 
   buttomNavigationBar() {
-    return NavigationBar(
-      onDestinationSelected: (int index) {
-        setState(() {
-          currentPageIndex = index;
-        });
-      },
-      selectedIndex: currentPageIndex,
-      destinations: <Widget>[
-        ...widget.navigations.map((e) {
-          return NavigationDestination(
-            icon: e.icon,
-            label: e.label,
-            selectedIcon: e.selectedIcon,
-          );
-        }).toList(),
-      ],
+    return NavigationBarTheme(
+      data: Theme.of(context).navigationBarTheme.copyWith(
+            iconTheme: WidgetStatePropertyAll(
+              IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+            ),
+          ),
+      child: NavigationBar(
+        indicatorColor: Theme.of(context).colorScheme.primary,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        selectedIndex: currentPageIndex,
+        destinations: <Widget>[
+          for (final (index, item) in widget.navigations.indexed)
+            Builder(
+              builder: (BuildContext context) {
+                final destination = NavigationDestination(
+                  icon: item.icon,
+                  label: item.label,
+                  selectedIcon: item.icon,
+                );
+
+                if (currentPageIndex == index) {
+                  return NavigationBarTheme(
+                    data: Theme.of(context).navigationBarTheme.copyWith(
+                          labelTextStyle: WidgetStatePropertyAll(
+                            Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          iconTheme: WidgetStatePropertyAll(
+                            IconThemeData(
+                                color: Theme.of(context).colorScheme.onPrimary),
+                          ),
+                        ),
+                    child: destination,
+                  );
+                }
+
+                return destination;
+              },
+            ),
+        ],
+      ),
     );
   }
 
